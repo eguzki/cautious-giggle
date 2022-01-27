@@ -1,0 +1,6 @@
+apiVersion: giggle.kuadrant.io.giggle.kuadrant.io/v1alpha1
+kind: Api
+metadata:
+  name: api-sample
+spec:
+  # TODO(user): Add fields here

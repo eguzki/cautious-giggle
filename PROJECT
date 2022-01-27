@@ -1,0 +1,19 @@
+domain: giggle.kuadrant.io
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: cautious-giggle
+repo: github.com/eguzki/cautious-giggle
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: giggle.kuadrant.io
+  group: giggle.kuadrant.io
+  kind: Api
+  path: github.com/eguzki/cautious-giggle/api/v1alpha1
+  version: v1alpha1
+version: "3"
