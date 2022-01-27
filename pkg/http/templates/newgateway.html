@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant New Gateway</title>
+        <style>
+        .container {
+        }
+        .i8 {
+          height: 75px;
+        }
+        .i9 {
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        input[type=text] {
+            width: 100%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            width: 100%;
+            color: orange;
+            padding: 15px;
+            margin: 10px 0px;
+            border: none;
+            cursor: pointer;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>NEW GATEWAY</h1></center>
+            </div>
+            <div class="i9">
+                <form id="newgatewayform" method="post" action="/newgateway" target="_blank">
+                    <label>Name: </label>
+                    <input type="text" placeholder="Enter name" name="name" required>
+                    <p><label>Labels</label></p>
+                    <label>Label: </label>
+                    <input type="text" placeholder="Enter label" name="label1" required>
+                    <label>Label: </label>
+                    <input type="text" placeholder="Enter label" name="label2" required>
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

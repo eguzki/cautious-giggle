@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant New Rate Limit Plan</title>
+        <style>
+        .container {
+        }
+        .i8 {
+          height: 75px;
+        }
+        .info {
+          height: 70px;
+        }
+        .unauthTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1em;
+        }
+        .unauthTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .unauthTableHead{
+            display: table-cell;
+        }
+        .unauthTableRow{
+            display: table-row;
+        }
+        .unauthTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .authTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1em;
+        }
+        .authTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .authTableHead{
+            display: table-cell;
+        }
+        .authTableRow{
+            display: table-row;
+        }
+        .authTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        #updatePlanButton {
+            background-color: #4CAF50;
+            width: 10%;
+            color: orange;
+            padding: 15px;
+            margin: 10px 0px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type=text] {
+            width: 50%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        button {
+          float: right;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>New Rate Limit Plan</h1></center>
+            </div>
+            <div class="info">
+                <p><label>API: API 1</label></p>
+                <p><label>Public Domain: example.io</label></p>
+            </div>
+            <div class="plan">
+                <form action="/createnewplan" method="post" target="_blank">
+                    <div>
+                        <center><h3>Unauthenticated Rate Limit</h3></center>
+                    </div>
+                    <div>
+                        <button type="submit">Create Rate Limit Plan</button>
+                    </div>
+                    <div class="unauthTable">
+                        <div class="unauthTableHeading">
+                            <div class="unauthTableHead">Type</div>
+                            <div class="unauthTableHead">Daily</div>
+                            <div class="unauthTableHead">Monthly</div>
+                            <div class="unauthTableHead">Eternity</div>
+                        </div>
+                        <div class="unauthTableRow">
+                            <div class="unauthTableCell">Global</div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="global-daily">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="global-monthly">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="global-eternity">
+                            </div>
+                        </div>
+                        <div class="unauthTableRow">
+                            <div class="unauthTableCell">Remote IP</div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="remoteIP-daily">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="remoteIP-monthly">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="remoteIP-eternity">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <center><h3>Authenticated Rate Limit</h3></center>
+                    </div>
+                    <div class="authTable">
+                        <div class="unauthTableHeading">
+                            <div class="authTableHead">Operation</div>
+                            <div class="authTableHead">Daily</div>
+                            <div class="authTableHead">Monthly</div>
+                            <div class="authTableHead">Eternity</div>
+                        </div>
+                        <div class="authTableRow">
+                            <div class="authTableCell">GET /cats</div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getcats-daily">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getcats-monthly">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getcats-eternity">
+                            </div>
+                        </div>
+                        <div class="authTableRow">
+                            <div class="authTableCell">POST /dogs</div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="postdogs-daily">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="postdogs-monthly">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="postdogs-eternity">
+                            </div>
+                        </div>
+                        <div class="authTableRow">
+                            <div class="authTableCell">GET /dogs</div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getdogs-daily">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getdogs-monthly">
+                            </div>
+                            <div class="authTableCell">
+                                <input type="text" value="0" name="getdogs-eternity">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

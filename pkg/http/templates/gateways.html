@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title> Kuadrant Dashboard </title>
+        <title>Kuadrant Gateways</title>
         <style>
         .container {
         }
@@ -10,7 +10,7 @@
           height: 75px;
         }
         .i9 {
-          height: 50px;
+          height: 75px;
         }
         .apiTable{
             display: table;
@@ -32,7 +32,7 @@
         .apiTableRow{
             display: table-row;
         }
-        #newapiform {
+        #newgatewayform {
           float: right;
         }
         Body {
@@ -44,41 +44,33 @@
     <body>
         <div class="container">
             <div class="i8">
-                <center><h1>MY APIs</h1></center>
+                <center><h1>MY GATEWAYS</h1></center>
             </div>
             <div class="i9">
-                <form id="newapiform" action="/servicediscovery" target="_blank">
-                    <button type="submit">Protect my API</button>
+                <form id="newgatewayform" action="/newgateway" target="_blank">
+                    <button type="submit">Deploy New Gateway</button>
                 </form>
             </div>
             <div class="apiTable">
                 <div class="apiTableHeading">
                     <div class="apiTableHead">Name</div>
                     <div class="apiTableHead">Description</div>
-                    <div class="apiTableHead">Gateway</div>
-                    <div class="apiTableHead">Rate Limit Plan</div>
-                    <div class="apiTableHead">Action</div>
+                    <div class="apiTableHead">Labels</div>
                 </div>
                 <div class="apiTableRow">
-                    <div class="apiTableCell">API 1</div>
-                    <div class="apiTableCell">Toystore super API</div>
-                    <div class="apiTableCell">None</div>
-                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">gateway-a</div>
+                    <div class="apiTableCell">my gateway a</div>
                     <div class="apiTableCell">
-                        <form action="/export" target="_blank">
-                            <button type="submit">Export Manifests</button>
-                        </form>
+                        <p>app=gateway-a</p>
+                        <p>gateways.kuadrant.io=enabled</p>
                     </div>
                 </div>
                 <div class="apiTableRow">
-                    <div class="apiTableCell">API 2</div>
-                    <div class="apiTableCell">Petstore super API</div>
-                    <div class="apiTableCell">None</div>
-                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">gateway-b</div>
+                    <div class="apiTableCell">my gateway b</div>
                     <div class="apiTableCell">
-                        <form action="/export" target="_blank">
-                            <button type="submit">Export Manifests</button>
-                        </form>
+                        <p>app=gateway-b</p>
+                        <p>gateways.kuadrant.io=enabled</p>
                     </div>
                 </div>
             </div>
