@@ -25,6 +25,7 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	gorillahandlers "github.com/gorilla/handlers"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -34,7 +35,7 @@ import (
 
 	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/controllers"
-	"github.com/eguzki/cautious-giggle/pkg/http/handlers"
+	"github.com/eguzki/cautious-giggle/pkg/http/html"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -108,5 +109,17 @@ func main() {
 }
 
 func startHTTPService() {
-	http.HandleFunc("/login", handlers.Login)
+	mux := http.NewServeMux()
+	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
+	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
+
+	setupLog.Info("starting HTTP service", "port", 8082)
+
+	go func() {
+		err := http.ListenAndServe(":8082", loggerRoute)
+		if err != nil {
+			setupLog.Error(err, "failed to start server")
+			os.Exit(1)
+		}
+	}()
 }

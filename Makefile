@@ -231,3 +231,22 @@ $(OPERATOR_SDK):
 
 .PHONY: operator-sdk
 operator-sdk: $(OPERATOR_SDK)
+
+# Kind tool
+KIND = $(PROJECT_DIR)/bin/kind
+KIND_CLUSTER_NAME = kuadrant-local
+$(KIND):
+	$(call go-get-tool,$(KIND),sigs.k8s.io/kind@v0.11.1)
+
+.PHONY : kind
+kind: $(KIND)
+
+.PHONY : cluster-cleanup
+cluster-cleanup: $(KIND)
+	$(KIND) delete cluster --name $(KIND_CLUSTER_NAME)
+
+.PHONY : cluster-setup
+cluster-setup: $(KIND) cluster-cleanup
+	$(KIND) create cluster --name $(KIND_CLUSTER_NAME) --config utils/kind/cluster.yaml
+
+
