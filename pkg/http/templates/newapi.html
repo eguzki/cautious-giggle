@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> Kuadrant New API</title>
+        <style>
+        .container {
+          display: grid;
+          grid-auto-columns: 1fr;
+          grid-auto-rows: 1fr;
+          gap: 0px 0px;
+        }
+        .i8 {
+          height: 50px;
+        }
+        .i9 {
+          height: 200px;
+        }
+        .apiTable{
+            display: table;
+            width: 100%;
+        }
+        .apiTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .apiTableHead{
+            display: table-cell;
+        }
+        .apiTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .apiTableRow{
+            display: table-row;
+        }
+        #newapiform {
+          float: right;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        input[type=text] {
+            width: 100%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>New API</h1></center>
+            </div>
+            <div class="i9">
+                <form action="/createnewapi" method="post" target="_blank">
+                    <p><label>Service: API 1</label></p>
+                    <label>Public Domain: </label>
+                    <input type="text" placeholder="Enter public domain" name="publicdomain" required>
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+            <div class="apiTable">
+                <div class="apiTableHeading">
+                    <div class="apiTableHead">Method</div>
+                    <div class="apiTableHead">Path</div>
+                    <div class="apiTableHead">Security</div>
+                </div>
+                <div class="apiTableRow">
+                    <div class="apiTableCell">GET</div>
+                    <div class="apiTableCell">/cats</div>
+                    <div class="apiTableCell">None</div>
+                </div>
+                <div class="apiTableRow">
+                    <div class="apiTableCell">POST</div>
+                    <div class="apiTableCell">/dogs</div>
+                    <div class="apiTableCell">OIDC</div>
+                </div>
+                <div class="apiTableRow">
+                    <div class="apiTableCell">GET</div>
+                    <div class="apiTableCell">/dogs</div>
+                    <div class="apiTableCell">apiKey</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
