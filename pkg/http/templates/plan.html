@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Kuadrant New Rate Limit Plan</title>
+        <title>Kuadrant Rate Limit Plan</title>
         <style>
         .container {
         }
@@ -10,7 +10,7 @@
           height: 75px;
         }
         .info {
-          height: 70px;
+          height: 150px;
         }
         .unauthTable{
             display: table;
@@ -81,33 +81,21 @@
     <body>
         <div class="container">
             <div class="i8">
-                <center><h1>New Rate Limit Plan</h1></center>
+                <center><h1>Rate Limit Plan</h1></center>
             </div>
             <div class="info">
                 <p><label>API: API 1</label></p>
                 <p><label>Public Domain: example.io</label></p>
+                <p><label>Name: Plan 1</label></p>
+                <p><label>Description: Plan 1</label></p>
             </div>
             <div class="plan">
-                <form action="/createnewplan" method="post" target="_blank">
-                    <div class="unauthTable">
-                        <div class="unauthTableRow">
-                            <div class="unauthTableCell">Name</div>
-                            <div class="unauthTableCell">
-                                <input type="text" placeholder="Enter name" name="name" required>
-                            </div>
-                        </div>
-                        <div class="unauthTableRow">
-                            <div class="unauthTableCell">Description</div>
-                            <div class="unauthTableCell">
-                                <input type="text" placeholder="Enter description" name="description" required>
-                            </div>
-                        </div>
-                    </div>
+                <form action="/updatenewplan" method="post" target="_blank">
                     <div>
                         <center><h3>Unauthenticated Rate Limit</h3></center>
                     </div>
                     <div>
-                        <button type="submit">Create Rate Limit Plan</button>
+                        <button type="submit">Update</button>
                     </div>
                     <div class="unauthTable">
                         <div class="unauthTableHeading">
@@ -225,6 +213,33 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="users">
+                <div class="i8">
+                    <center><h3>Users</h3></center>
+                </div>
+                <div class="authTable">
+                    <div class="authTableRow">
+                        <div class="authTableCell">
+                                <ul>
+                                    <li>
+                                        <a href="/users?id=user1">User 1</a>
+                                    </li>
+                                    <li>
+                                        <a href="/users?id=user2">User 2</a>
+                                    </li>
+                                    <li>
+                                        <a href="/users?id=user3">User 3</a>
+                                    </li>
+                                </ul>
+                        </div>
+                        <div class="authTableCell">
+                            <form method="get" action="/users" target="_blank">
+                                <button type="submit">Manage users</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
