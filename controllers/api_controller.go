@@ -33,9 +33,9 @@ type ApiReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=giggle.kuadrant.io.giggle.kuadrant.io,resources=apis,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=giggle.kuadrant.io.giggle.kuadrant.io,resources=apis/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=giggle.kuadrant.io.giggle.kuadrant.io,resources=apis/finalizers,verbs=update
+//+kubebuilder:rbac:groups=giggle.kuadrant.io,resources=apis,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=giggle.kuadrant.io,resources=apis/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=giggle.kuadrant.io,resources=apis/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

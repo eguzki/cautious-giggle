@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.7.0
   creationTimestamp: null
-  name: apis.giggle.kuadrant.io.giggle.kuadrant.io
+  name: apis.giggle.kuadrant.io
 spec:
-  group: giggle.kuadrant.io.giggle.kuadrant.io
+  group: giggle.kuadrant.io
   names:
     kind: Api
     listKind: ApiList
@@ -36,10 +36,12 @@ spec:
           spec:
             description: ApiSpec defines the desired state of Api
             properties:
-              foo:
-                description: Foo is an example field of Api. Edit api_types.go to
-                  remove/update
+              description:
                 type: string
+              gateway:
+                type: string
+            required:
+            - description
             type: object
           status:
             description: ApiStatus defines the observed state of Api

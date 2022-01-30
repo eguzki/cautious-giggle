@@ -25,11 +25,10 @@ import (
 
 // ApiSpec defines the desired state of Api
 type ApiSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Description string `json:"description"`
 
-	// Foo is an example field of Api. Edit api_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// +optional
+	Gateway *string `json:"gateway,omitempty"`
 }
 
 // ApiStatus defines the observed state of Api

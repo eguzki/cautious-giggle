@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant Dashboard Template</title>
+        <style>
+        .container {
+        }
+        .i8 {
+          height: 75px;
+        }
+        .i9 {
+          height: 50px;
+        }
+        .apiTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2em;
+        }
+        .apiTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .apiTableHead{
+            display: table-cell;
+        }
+        .apiTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .apiTableRow{
+            display: table-row;
+        }
+        #newapiform {
+          float: right;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>MY APIs</h1></center>
+            </div>
+            <div class="i9">
+                <form id="newapiform" action="/servicediscovery">
+                    <button type="submit">Protect my API</button>
+                </form>
+            </div>
+            <div class="apiTable">
+                <div class="apiTableHeading">
+                    <div class="apiTableHead">Name</div>
+                    <div class="apiTableHead">Description</div>
+                    <div class="apiTableHead">Gateway</div>
+                    <div class="apiTableHead">Action</div>
+                </div>
+                {{range .}}
+                <div class="apiTableRow">
+                    <div class="apiTableCell"><a href="/api?id={{ .Name }}">{{ .Name }}</a></div>
+                    <div class="apiTableCell">{{ .Spec.Description }}</div>
+                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">
+                        <form action="/export" method="GET">
+                            <input type="hidden" name="api" value="{{ .Name }}" />
+                            <button type="submit">Export Manifests</button>
+                        </form>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </body>
+</html>

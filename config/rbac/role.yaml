@@ -7,7 +7,7 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis
   verbs:
@@ -19,13 +19,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis/finalizers
   verbs:
   - update
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis/status
   verbs:

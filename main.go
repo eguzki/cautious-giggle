@@ -30,11 +30,13 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/controllers"
+	"github.com/eguzki/cautious-giggle/pkg/http/handlers"
 	"github.com/eguzki/cautious-giggle/pkg/http/html"
 	//+kubebuilder:scaffold:imports
 )
@@ -109,8 +111,18 @@ func main() {
 }
 
 func startHTTPService() {
+
+	k8sClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{Scheme: scheme})
+	if err != nil {
+		panic(err)
+	}
+
+	dashboardHandler := &handlers.DashboardHandler{K8sClient: k8sClient}
+
 	mux := http.NewServeMux()
 	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
+	mux.Handle("/dashboard", dashboardHandler)
+
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 
 	setupLog.Info("starting HTTP service", "port", 8082)

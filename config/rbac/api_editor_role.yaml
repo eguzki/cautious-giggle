@@ -5,7 +5,7 @@ metadata:
   name: api-editor-role
 rules:
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis/status
   verbs:

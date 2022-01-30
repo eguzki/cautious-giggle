@@ -1,6 +1,7 @@
+---
 apiVersion: giggle.kuadrant.io/v1alpha1
 kind: Api
 metadata:
-  name: api-sample
+  name: toystore
 spec:
-  description: Sample API
+  description: "The ToyStore API"

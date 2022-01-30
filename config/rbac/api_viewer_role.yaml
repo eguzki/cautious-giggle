@@ -5,7 +5,7 @@ metadata:
   name: api-viewer-role
 rules:
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis
   verbs:
@@ -13,7 +13,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - giggle.kuadrant.io.giggle.kuadrant.io
+  - giggle.kuadrant.io
   resources:
   - apis/status
   verbs:
