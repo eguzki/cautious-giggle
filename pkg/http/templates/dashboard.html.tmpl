@@ -5,6 +5,8 @@
         <title>Kuadrant Dashboard Template</title>
         <style>
         .container {
+            width: 70%;
+            margin: auto;
         }
         .i8 {
           height: 75px;
@@ -62,7 +64,7 @@
                 <div class="apiTableRow">
                     <div class="apiTableCell"><a href="/api?id={{ .Name }}">{{ .Name }}</a></div>
                     <div class="apiTableCell">{{ .Spec.Description }}</div>
-                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">{{if not .Spec.Gateway }}None{{else}}{{ .Spec.Gateway }}{{end}}</div>
                     <div class="apiTableCell">
                         <form action="/export" method="GET">
                             <input type="hidden" name="api" value="{{ .Name }}" />
