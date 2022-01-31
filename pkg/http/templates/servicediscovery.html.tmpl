@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> Kuadrant Service Discovery </title>
+        <style>
+        .container {
+            width: 70%;
+            margin: auto;
+        }
+        .i8 {
+          height: 75px;
+        }
+        .apiTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2em;
+        }
+        .apiTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .apiTableHead{
+            display: table-cell;
+        }
+        .apiTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .apiTableRow{
+            display: table-row;
+        }
+        #newapiform {
+          float: right;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>Discovered APIs</h1></center>
+            </div>
+            <div class="apiTable">
+                <div class="apiTableHeading">
+                    <div class="apiTableHead">Name</div>
+                    <div class="apiTableHead">Action</div>
+                </div>
+                {{range .}}
+                <div class="apiTableRow">
+                    <div class="apiTableCell">{{ .Name }}</div>
+                    <div class="apiTableCell">
+                        <form action="/newapi">
+                            <input type="hidden" name="service" value="{{ .Name }}" />
+                            <button type="submit">Add</button>
+                        </form>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </body>
+</html>

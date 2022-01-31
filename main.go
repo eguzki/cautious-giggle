@@ -118,10 +118,12 @@ func startHTTPService() {
 	}
 
 	dashboardHandler := &handlers.DashboardHandler{K8sClient: k8sClient}
+	serviceDiscoveryHandler := &handlers.ServiceDiscoverydHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
 	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
 	mux.Handle("/dashboard", dashboardHandler)
+	mux.Handle("/servicediscovery", serviceDiscoveryHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 
