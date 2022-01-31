@@ -12,13 +12,13 @@ import (
 	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
-type ServiceDiscoverydHandler struct {
+type ServiceDiscoveryHandler struct {
 	K8sClient client.Client
 }
 
-var _ http.Handler = &ServiceDiscoverydHandler{}
+var _ http.Handler = &ServiceDiscoveryHandler{}
 
-func (a *ServiceDiscoverydHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *ServiceDiscoveryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFS(giggletemplates.ServiceDiscoveryContent, "servicediscovery.html.tmpl")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

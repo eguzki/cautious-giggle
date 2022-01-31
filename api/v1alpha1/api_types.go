@@ -25,7 +25,10 @@ import (
 
 // ApiSpec defines the desired state of Api
 type ApiSpec struct {
-	Description string `json:"description"`
+	Description   string `json:"description"`
+	PublicDomain  string `json:"publicdomain"`
+	OAS           string `json:"oas"`
+	PathMatchType string `json:"pathmatchtype"`
 
 	// +optional
 	Gateway *string `json:"gateway,omitempty"`

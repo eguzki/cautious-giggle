@@ -40,8 +40,17 @@ spec:
                 type: string
               gateway:
                 type: string
+              oas:
+                type: string
+              pathmatchtype:
+                type: string
+              publicdomain:
+                type: string
             required:
             - description
+            - oas
+            - pathmatchtype
+            - publicdomain
             type: object
           status:
             description: ApiStatus defines the observed state of Api

@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carstore
+  annotations:
+    discovery.kuadrant.io/oas-configmap: "carstore-oas"
+  labels:
+    discovery.kuadrant.io/enabled: "true"
+spec:
+  selector:
+    svc: cars
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: carstore-oas
+data:
+  openapi.yaml: |
+    ---
+    openapi: "3.1.0"
+    info:
+      title: "Car Store API"
+      version: "1.0.0"
+    servers:
+      - url: https://carstore.example.io/v1
+    paths:
+      /cars:
+        get:  # No sec requirements
+          operationId: "getCars"
+          responses:
+            405:
+              description: "invalid input"
+        post:  # API key
+          operationId: "postCar"
+          security:
+            - carstore_api_key: []
+          responses:
+            405:
+              description: "invalid input"
+      /trucks:
+        get:  # OIDC
+          operationId: "getTrucs"
+          security:
+            - carstore_oidc:
+              - read:trucs
+          responses:
+            405:
+              description: "invalid input"
+    components:
+      securitySchemes:
+        carstore_api_key:
+          type: apiKey
+          name: api_key
+          in: header
+        carstore_oidc:
+          type: openIdConnect
+          openIdConnectUrl: http://example.org/auth/realms/myrealm

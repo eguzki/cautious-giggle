@@ -3,6 +3,7 @@ module github.com/eguzki/cautious-giggle
 go 1.16
 
 require (
+	github.com/getkin/kin-openapi v0.88.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.15.0

@@ -2,9 +2,11 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title> Kuadrant New API</title>
+        <title>Kuadrant New API</title>
         <style>
         .container {
+            width: 50%;
+            margin: auto;
         }
         .i8 {
           height: 75px;
@@ -44,6 +46,9 @@
             border: 2px solid green;
             box-sizing: border-box;
         }
+        button {
+          float: right;
+        }
         </style>
     </head>
     <body>
@@ -52,19 +57,21 @@
                 <center><h1>New API</h1></center>
             </div>
             <div class="i9">
-                <form action="/createnewapi" method="post" target="_blank">
-                    <p><label>Service: API 1</label></p>
-                    <label>Name: </label>
-                    <input type="text" placeholder="Enter name" name="name" required>
+                <form action="/createnewapi" method="post">
+                    <div>
+                        <button type="submit">Add</button>
+                    </div>
+                    <input type="hidden" name="service" value="{{ .ServiceName }}" />
+                    <p><label>Service: {{ .ServiceName }}</label></p>
                     <label>Description: </label>
                     <input type="text" placeholder="Enter description" name="description" required>
                     <label>Public Domain: </label>
                     <input type="text" placeholder="Enter public domain" name="publicdomain" required>
-                    <select name="api1plans" id="match-type">
+                    <label>Path match type:</label>
+                    <select name="matchtype" id="match-type">
                         <option value="exact" selected>Exact</option>
                         <option value="prefix">Prefix</option>
                     </select>
-                    <button type="submit">Add</button>
                 </form>
             </div>
             <div class="apiTable">
@@ -73,21 +80,13 @@
                     <div class="apiTableHead">Path</div>
                     <div class="apiTableHead">Security</div>
                 </div>
+                {{range .Operations }}
                 <div class="apiTableRow">
-                    <div class="apiTableCell">GET</div>
-                    <div class="apiTableCell">/cats</div>
-                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">{{ .Method }}</div>
+                    <div class="apiTableCell">{{ .Path }}</div>
+                    <div class="apiTableCell">{{ .Security }}</div>
                 </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell">POST</div>
-                    <div class="apiTableCell">/dogs</div>
-                    <div class="apiTableCell">OIDC</div>
-                </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell">GET</div>
-                    <div class="apiTableCell">/dogs</div>
-                    <div class="apiTableCell">apiKey</div>
-                </div>
+                {{end}}
             </div>
         </div>
     </body>
