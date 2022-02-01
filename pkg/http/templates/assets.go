@@ -15,3 +15,7 @@ var ServiceDiscoveryContent embed.FS
 // NewApiContent holds templates
 //go:embed newapi.html.tmpl
 var NewApiContent embed.FS
+
+// APIContent holds templates
+//go:embed api.html.tmpl
+var APIContent embed.FS

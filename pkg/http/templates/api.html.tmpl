@@ -2,9 +2,11 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title> Kuadrant API</title>
+        <title>Kuadrant API</title>
         <style>
         .container {
+            width: 50%;
+            margin: auto;
         }
         .i8 {
           height: 75px;
@@ -67,25 +69,18 @@
           font-family: Calibri, Helvetica, sans-serif;
           background-color: lightblue;
         }
-        #updateGatewayButton {
-            background-color: #4CAF50;
-            width: 10%;
-            color: orange;
-            padding: 15px;
-            margin: 10px 0px;
-            border: none;
-            cursor: pointer;
-        }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="i8">
-                <center><h1>API 1</h1></center>
+                <center><h1>API {{ .Name }}</h1></center>
             </div>
             <div class="i9">
-                <p><label>Service: API 1</label></p>
-                <p><label>Public Domain: example.io</label></p>
+                <p><label>Service: {{ .ServiceName }}</label></p>
+                <p><label>Description: {{ .Description }}</label></p>
+                <p><label>Public Domain: {{ .PublicDomain }}</label></p>
+                <p><label>Path match type: {{ .PathMatchType }}</label></p>
             </div>
             <div class="apiTable">
                 <div class="apiTableHeading">
@@ -93,43 +88,32 @@
                     <div class="apiTableHead">Path</div>
                     <div class="apiTableHead">Security</div>
                 </div>
+                {{range .Operations }}
                 <div class="apiTableRow">
-                    <div class="apiTableCell">GET</div>
-                    <div class="apiTableCell">/cats</div>
-                    <div class="apiTableCell">None</div>
+                    <div class="apiTableCell">{{ .Method }}</div>
+                    <div class="apiTableCell">{{ .Path }}</div>
+                    <div class="apiTableCell">{{ .Security }}</div>
                 </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell">POST</div>
-                    <div class="apiTableCell">/dogs</div>
-                    <div class="apiTableCell">OIDC</div>
-                </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell">GET</div>
-                    <div class="apiTableCell">/dogs</div>
-                    <div class="apiTableCell">apiKey</div>
-                </div>
+                {{end}}
             </div>
             <div class="plans">
-                <div class="i8">
-                    <center><h3>Plans</h3></center>
+                <div>
+                    <center><h3>Rate Limit Plans</h3></center>
                 </div>
                 <div class="planTable">
                     <div class="planRow">
                         <div class="planCell">
                                 <ul class="itemlist">
+                                    {{range .Operations }}
                                     <li>
-                                        <a href="/plan?id=plan1">Plan 1</a>
+                                        <a href="/plan?id={{ .PlanId }}&api={{$.Name}}">Plan 1</a>
                                     </li>
-                                    <li>
-                                        <a href="/plan?id=plan2">Plan 2</a>
-                                    </li>
-                                    <li>
-                                        <a href="/plan?id=plan3">Plan 3</a>
-                                    </li>
+                                    {{end}}
                                 </ul>
                         </div>
                         <div class="planCell">
-                            <form id="newPlanForm" method="get" action="/newapiplan" target="_blank">
+                            <form id="newPlanForm" method="get" action="/newapiplan">
+                                <input type="hidden" name="api" value="{{ .Name }}" />
                                 <button type="submit">New Rate Limit Plan</button>
                             </form>
                         </div>
@@ -137,13 +121,13 @@
                 </div>
             </div>
             <div class="gateways">
-                <div class="i8">
+                <div>
                     <center><h3>Gateways</h3></center>
                 </div>
                 <div class="gwTable">
                     <div class="gwRow">
                         <div class="gwCell">
-                            <form id="updateGwForm" method="post" action="/updateapigateway" target="_blank">
+                            <form id="updateGwForm" method="post" action="/updateapigateway">
                                 <div>
                                     <input type="radio" id="gw1" name="api1_gw" value="gw1">
                                     <label for="gw1">Gateway 1</label><br>
@@ -153,7 +137,7 @@
                                     <label for="gw3">Gateway 3</label>
                                 </div>
                                 <div>
-                                    <button id="updateGatewayButton" type="submit">Update Gateway</button>
+                                    <button type="submit">Update Gateway</button>
                                 </div>
                             </form>
                         </div>

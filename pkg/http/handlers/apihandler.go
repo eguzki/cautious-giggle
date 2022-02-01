@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -8,8 +10,7 @@ type APIHandler struct {
 	K8sClient client.Client
 }
 
-func NewAPIHandler(k8sClient client.Client) *APIHandler {
-	return &APIHandler{
-		K8sClient: k8sClient,
-	}
+var _ http.Handler = &APIHandler{}
+
+func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
