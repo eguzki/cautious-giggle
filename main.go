@@ -123,6 +123,7 @@ func startHTTPService() {
 	createNewAPIHandler := &handlers.CreateNewAPIHandler{K8sClient: k8sClient}
 	aPIHandler := &handlers.APIHandler{K8sClient: k8sClient}
 	gatewaysHandler := &handlers.GatewaysHandler{K8sClient: k8sClient}
+	createGatewaysHandler := &handlers.CreateGatewaysHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
 	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
@@ -132,6 +133,8 @@ func startHTTPService() {
 	mux.Handle("/createnewapi", createNewAPIHandler)
 	mux.Handle("/api", aPIHandler)
 	mux.Handle("/gateways", gatewaysHandler)
+	mux.Handle("/newgateway.html", http.FileServer(http.FS(html.NewGatewayContent)))
+	mux.Handle("/creategateway", createGatewaysHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 
