@@ -12,10 +12,7 @@
           height: 75px;
         }
         .i9 {
-          height: 100px;
-        }
-        .i10 {
-          height: 100px;
+          height: 150px;
         }
         .apiTable{
             display: table;
@@ -104,9 +101,9 @@
                     <div class="planRow">
                         <div class="planCell">
                                 <ul class="itemlist">
-                                    {{range .Operations }}
+                                    {{range .Plans }}
                                     <li>
-                                        <a href="/plan?id={{ .PlanId }}&api={{$.Name}}">Plan 1</a>
+                                        <a href="/plan?id={{ .ID }}&api={{$.Name }}">{{ .ID }}</a>
                                     </li>
                                     {{end}}
                                 </ul>
@@ -128,21 +125,20 @@
                     <div class="gwRow">
                         <div class="gwCell">
                             <form id="updateGwForm" method="post" action="/updateapigateway">
+                                <input type="hidden" name="api" value="{{ .Name }}" />
+                                {{range .Gateways }}
                                 <div>
-                                    <input type="radio" id="gw1" name="api1_gw" value="gw1">
-                                    <label for="gw1">Gateway 1</label><br>
-                                    <input type="radio" id="gw2" name="api1_gw" value="gw2">
-                                    <label for="gw2">Gateway 2</label><br>
-                                    <input type="radio" id="gw3" name="api1_gw" value="gw3">
-                                    <label for="gw3">Gateway 3</label>
+                                    <input type="radio" {{if eq $.Gateway .ID}}checked{{end}} id="{{ .ID }}" name="gw" value="{{ .ID }}">
+                                    <label for="{{ .ID }}">{{ .ID }}</label>
                                 </div>
+                                {{end}}
                                 <div>
                                     <button type="submit">Update Gateway</button>
                                 </div>
                             </form>
                         </div>
                         <div class="gwCell">
-                            <form id="GatewayForm" method="get" action="/gateways" target="_blank">
+                            <form method="get" action="/gateways">
                                 <button type="submit">Manage Gateways</button>
                             </form>
                         </div>

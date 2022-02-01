@@ -1,0 +1,7 @@
+---
+apiVersion: giggle.kuadrant.io/v1alpha1
+kind: Gateway
+metadata:
+  name: gamestore-gateway
+spec:
+  id: "gamestore-gateway"

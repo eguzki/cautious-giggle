@@ -1,0 +1,7 @@
+---
+apiVersion: giggle.kuadrant.io/v1alpha1
+kind: Gateway
+metadata:
+  name: carstore-gateway
+spec:
+  id: "carstore-gateway"

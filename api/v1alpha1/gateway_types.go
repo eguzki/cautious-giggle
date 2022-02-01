@@ -23,26 +23,13 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-type ApiPlan struct {
+// GatewaySpec defines the desired state of Gateway
+type GatewaySpec struct {
 	ID string `json:"id"`
 }
 
-// ApiSpec defines the desired state of Api
-type ApiSpec struct {
-	Description   string `json:"description"`
-	PublicDomain  string `json:"publicdomain"`
-	OAS           string `json:"oas"`
-	PathMatchType string `json:"pathmatchtype"`
-	ServiceName   string `json:"servicename"`
-
-	// +optional
-	Plans []ApiPlan `json:"plans,omitempty"`
-	// +optional
-	Gateway *string `json:"gateway,omitempty"`
-}
-
-// ApiStatus defines the observed state of Api
-type ApiStatus struct {
+// GatewayStatus defines the observed state of Gateway
+type GatewayStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -50,24 +37,24 @@ type ApiStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// Api is the Schema for the apis API
-type Api struct {
+// Gateway is the Schema for the gateways API
+type Gateway struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ApiSpec   `json:"spec,omitempty"`
-	Status ApiStatus `json:"status,omitempty"`
+	Spec   GatewaySpec   `json:"spec,omitempty"`
+	Status GatewayStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// ApiList contains a list of Api
-type ApiList struct {
+// GatewayList contains a list of Gateway
+type GatewayList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Api `json:"items"`
+	Items           []Gateway `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Api{}, &ApiList{})
+	SchemeBuilder.Register(&Gateway{}, &GatewayList{})
 }

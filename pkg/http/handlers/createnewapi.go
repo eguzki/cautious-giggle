@@ -90,6 +90,7 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		},
 		Spec: gigglekuadrantiov1alpha1.ApiSpec{
 			Description:   apiDescr,
+			ServiceName:   serviceName,
 			PublicDomain:  publicDomain,
 			OAS:           oasContent,
 			PathMatchType: matchType,
