@@ -4,4 +4,7 @@ kind: Gateway
 metadata:
   name: gamestore-gateway
 spec:
-  id: "gamestore-gateway"
+  description: "Gamestore Gateway"
+  labels: 
+    app: gamestore
+    gateways.kuadrant.io: enabled

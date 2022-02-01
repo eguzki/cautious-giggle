@@ -1,0 +1,50 @@
+---
+apiVersion: giggle.kuadrant.io/v1alpha1
+kind: Api
+metadata:
+  name: carstore
+spec:
+  description: "The Carstore API"
+  publicdomain: carstore.io
+  pathmatchtype: exact
+  servicename: carstore
+  oas: |
+    ---
+    openapi: "3.1.0"
+    info:
+      title: "Car Store API"
+      version: "1.0.0"
+    servers:
+      - url: https://carstore.example.io/v1
+    paths:
+      /cars:
+        get:  # No sec requirements
+          operationId: "getCars"
+          responses:
+            405:
+              description: "invalid input"
+        post:  # API key
+          operationId: "postCar"
+          security:
+            - carstore_api_key: []
+          responses:
+            405:
+              description: "invalid input"
+      /trucks:
+        get:  # OIDC
+          operationId: "getTrucs"
+          security:
+            - carstore_oidc:
+              - read:trucs
+          responses:
+            405:
+              description: "invalid input"
+    components:
+      securitySchemes:
+        carstore_api_key:
+          type: apiKey
+          name: api_key
+          in: header
+        carstore_oidc:
+          type: openIdConnect
+          openIdConnectUrl: http://example.org/auth/realms/myrealm

@@ -19,22 +19,22 @@ type ServiceDiscoveryHandler struct {
 var _ http.Handler = &ServiceDiscoveryHandler{}
 
 func (a *ServiceDiscoveryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFS(giggletemplates.ServiceDiscoveryContent, "servicediscovery.html.tmpl")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	serviceList := &corev1.ServiceList{}
 	labels := []string{utils.KuadrantDiscoveryLabel}
-	err = a.K8sClient.List(context.Background(), serviceList, client.HasLabels(labels))
+	err := a.K8sClient.List(context.Background(), serviceList, client.HasLabels(labels))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	data := serviceList.Items
-	if err := t.Execute(w, data); err != nil {
+	t, err := template.ParseFS(giggletemplates.TemplatesFS, "servicediscovery.html.tmpl")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := t.Execute(w, serviceList.Items); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -22,7 +22,7 @@ type Plan struct {
 }
 
 type Gateway struct {
-	ID string
+	Name string
 }
 
 type APIData struct {
@@ -121,10 +121,10 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for idx := range gatewayList.Items {
-		aPIData.Gateways = append(aPIData.Gateways, Gateway{ID: gatewayList.Items[idx].Spec.ID})
+		aPIData.Gateways = append(aPIData.Gateways, Gateway{Name: gatewayList.Items[idx].Name})
 	}
 
-	t, err := template.ParseFS(giggletemplates.APIContent, "api.html.tmpl")
+	t, err := template.ParseFS(giggletemplates.TemplatesFS, "api.html.tmpl")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

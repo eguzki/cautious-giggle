@@ -4,4 +4,7 @@ kind: Gateway
 metadata:
   name: carstore-gateway
 spec:
-  id: "carstore-gateway"
+  description: "Carstore Gateway"
+  labels:
+    app: carstore
+    gateways.kuadrant.io: enabled

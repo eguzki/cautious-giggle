@@ -36,10 +36,15 @@ spec:
           spec:
             description: GatewaySpec defines the desired state of Gateway
             properties:
-              id:
+              description:
                 type: string
+              labels:
+                additionalProperties:
+                  type: string
+                type: object
             required:
-            - id
+            - description
+            - labels
             type: object
           status:
             description: GatewayStatus defines the observed state of Gateway

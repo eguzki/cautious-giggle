@@ -5,6 +5,8 @@
         <title>Kuadrant Gateways</title>
         <style>
         .container {
+            width: 70%;
+            margin: auto;
         }
         .i8 {
           height: 75px;
@@ -47,7 +49,7 @@
                 <center><h1>MY GATEWAYS</h1></center>
             </div>
             <div class="i9">
-                <form id="newgatewayform" action="/newgateway" target="_blank">
+                <form id="newgatewayform" action="/newgateway">
                     <button type="submit">Deploy New Gateway</button>
                 </form>
             </div>
@@ -57,22 +59,18 @@
                     <div class="apiTableHead">Description</div>
                     <div class="apiTableHead">Labels</div>
                 </div>
+                {{range .}}
+                {{ $labels := .Spec.Labels }}
                 <div class="apiTableRow">
-                    <div class="apiTableCell">gateway-a</div>
-                    <div class="apiTableCell">my gateway a</div>
+                    <div class="apiTableCell">{{ .Name }}</div>
+                    <div class="apiTableCell">{{ .Spec.Description }}</div>
                     <div class="apiTableCell">
-                        <p>app=gateway-a</p>
-                        <p>gateways.kuadrant.io=enabled</p>
+                        {{range $k, $v := $labels}}
+                            <div>{{ $k }}={{ $v }}</div>
+                        {{end}}
                     </div>
                 </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell">gateway-b</div>
-                    <div class="apiTableCell">my gateway b</div>
-                    <div class="apiTableCell">
-                        <p>app=gateway-b</p>
-                        <p>gateways.kuadrant.io=enabled</p>
-                    </div>
-                </div>
+                {{end}}
             </div>
         </div>
     </body>

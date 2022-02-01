@@ -4,18 +4,10 @@ import (
 	"embed"
 )
 
-// DashboardContent holds templates
+// TemplatesFS holds templates
 //go:embed dashboard.html.tmpl
-var DashboardContent embed.FS
-
-// ServiceDiscoveryContent holds templates
 //go:embed servicediscovery.html.tmpl
-var ServiceDiscoveryContent embed.FS
-
-// NewApiContent holds templates
 //go:embed newapi.html.tmpl
-var NewApiContent embed.FS
-
-// APIContent holds templates
 //go:embed api.html.tmpl
-var APIContent embed.FS
+//go:embed gateways.html.tmpl
+var TemplatesFS embed.FS

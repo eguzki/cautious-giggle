@@ -25,7 +25,8 @@ import (
 
 // GatewaySpec defines the desired state of Gateway
 type GatewaySpec struct {
-	ID string `json:"id"`
+	Description string            `json:"description"`
+	Labels      map[string]string `json:"labels"`
 }
 
 // GatewayStatus defines the observed state of Gateway

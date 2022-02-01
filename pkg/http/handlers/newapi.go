@@ -112,7 +112,7 @@ func (a *NewApiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t, err := template.ParseFS(giggletemplates.NewApiContent, "newapi.html.tmpl")
+	t, err := template.ParseFS(giggletemplates.TemplatesFS, "newapi.html.tmpl")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

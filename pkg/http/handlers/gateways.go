@@ -11,28 +11,27 @@ import (
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
 )
 
-type DashboardHandler struct {
+type GatewaysHandler struct {
 	K8sClient client.Client
 }
 
-var _ http.Handler = &DashboardHandler{}
+var _ http.Handler = &GatewaysHandler{}
 
-func (a *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFS(giggletemplates.TemplatesFS, "dashboard.html.tmpl")
+func (a *GatewaysHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	gatewayList := &gigglekuadrantiov1alpha1.GatewayList{}
+	err := a.K8sClient.List(context.Background(), gatewayList)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	apiList := &gigglekuadrantiov1alpha1.ApiList{}
-	err = a.K8sClient.List(context.Background(), apiList)
+	t, err := template.ParseFS(giggletemplates.TemplatesFS, "gateways.html.tmpl")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	data := apiList.Items
-	if err := t.Execute(w, data); err != nil {
+	if err := t.Execute(w, gatewayList.Items); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
