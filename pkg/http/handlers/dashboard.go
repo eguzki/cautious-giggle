@@ -7,7 +7,7 @@ import (
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
+	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
 )
 
@@ -24,7 +24,7 @@ func (a *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apiList := &gigglekuadrantiov1alpha1.ApiList{}
+	apiList := &gigglev1alpha1.ApiList{}
 	err = a.K8sClient.List(context.Background(), apiList)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
