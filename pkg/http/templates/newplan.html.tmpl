@@ -5,6 +5,8 @@
         <title>Kuadrant New Rate Limit Plan</title>
         <style>
         .container {
+            width: 50%;
+            margin: auto;
         }
         .i8 {
           height: 75px;
@@ -84,11 +86,16 @@
                 <center><h1>New Rate Limit Plan</h1></center>
             </div>
             <div class="info">
-                <p><label>API: API 1</label></p>
-                <p><label>Public Domain: example.io</label></p>
+                <div class="i9">
+                    <label>API: {{ .APIName }}</label>
+                </div>
+                <div class="i9">
+                    <label>Public Domain: {{ .APIDomain }}</label>
+                </div>
             </div>
             <div class="plan">
-                <form action="/createnewplan" method="post" target="_blank">
+                <form action="/createnewratelimitplan" method="post">
+                    <input type="hidden" name="api" value="{{ .APIName }}" />
                     <div class="unauthTable">
                         <div class="unauthTableRow">
                             <div class="unauthTableCell">Name</div>
@@ -119,63 +126,41 @@
                         <div class="unauthTableRow">
                             <div class="unauthTableCell">Global</div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="global-daily">
+                                <input type="text" value="0" name="rl-unauth-global-daily">
                             </div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="global-monthly">
+                                <input type="text" value="0" name="rl-unauth-global-monthly">
                             </div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="global-eternity">
+                                <input type="text" value="0" name="rl-unauth-global-eternity">
                             </div>
                         </div>
                         <div class="unauthTableRow">
                             <div class="unauthTableCell">Remote IP</div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="remoteIP-daily">
+                                <input type="text" value="0" name="rl-unauth-remoteIP-daily">
                             </div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="remoteIP-monthly">
+                                <input type="text" value="0" name="rl-unauth-remoteIP-monthly">
                             </div>
                             <div class="unauthTableCell">
-                                <input type="text" value="0" name="remoteIP-eternity">
+                                <input type="text" value="0" name="rl-unauth-remoteIP-eternity">
                             </div>
                         </div>
+                        {{range .Operations }}
                         <div class="authTableRow">
-                            <div class="authTableCell">GET /cats</div>
+                            <div class="authTableCell">{{ .Operation }}</div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-daily">
+                                <input type="text" value="0" name="rl-unauth-{{ .OperationID }}-daily">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-monthly">
+                                <input type="text" value="0" name="rl-unauth-{{ .OperationID }}-monthly">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-eternity">
-                            </div>
-                        </div>
-                        <div class="authTableRow">
-                            <div class="authTableCell">POST /dogs</div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-daily">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-monthly">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-eternity">
+                                <input type="text" value="0" name="rl-unauth-{{ .OperationID }}-eternity">
                             </div>
                         </div>
-                        <div class="authTableRow">
-                            <div class="authTableCell">GET /dogs</div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-daily">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-monthly">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-eternity">
-                            </div>
-                        </div>
+                        {{end}}
                     </div>
                     <div>
                         <center><h3>Authenticated Rate Limit</h3></center>
@@ -187,42 +172,20 @@
                             <div class="authTableHead">Monthly</div>
                             <div class="authTableHead">Eternity</div>
                         </div>
+                        {{range .Operations }}
                         <div class="authTableRow">
-                            <div class="authTableCell">GET /cats</div>
+                            <div class="authTableCell">{{ .Operation }}</div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-daily">
+                                <input type="text" value="0" name="rl-auth-{{ .OperationID }}-daily">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-monthly">
+                                <input type="text" value="0" name="rl-auth-{{ .OperationID }}-monthly">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="getcats-eternity">
+                                <input type="text" value="0" name="rl-auth-{{ .OperationID }}-eternity">
                             </div>
                         </div>
-                        <div class="authTableRow">
-                            <div class="authTableCell">POST /dogs</div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-daily">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-monthly">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="postdogs-eternity">
-                            </div>
-                        </div>
-                        <div class="authTableRow">
-                            <div class="authTableCell">GET /dogs</div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-daily">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-monthly">
-                            </div>
-                            <div class="authTableCell">
-                                <input type="text" value="0" name="getdogs-eternity">
-                            </div>
-                        </div>
+                        {{end}}
                     </div>
                 </form>
             </div>

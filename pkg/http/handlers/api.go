@@ -5,13 +5,13 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
 	"github.com/eguzki/cautious-giggle/pkg/utils"
-	"github.com/getkin/kin-openapi/openapi3"
 )
 
 type APIHandler struct {
