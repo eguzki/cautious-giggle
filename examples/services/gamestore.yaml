@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gamestore
+  labels:
+    discovery.kuadrant.io/enabled: "true"
+spec:
+  selector:
+    svc: games
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000

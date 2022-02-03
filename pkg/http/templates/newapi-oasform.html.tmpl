@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant New API</title>
+        <style>
+        .container {
+            width: 50%;
+            margin: auto;
+        }
+        .i8 {
+          height: 75px;
+        }
+        .i9 {
+            padding: 10px 1px;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        input[type=text] {
+            width: 100%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        button {
+          float: right;
+        }
+        textarea {
+            font-size: .8rem;
+            letter-spacing: 1px;
+            padding: 10px;
+            max-width: 100%;
+            line-height: 1.5;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 1px #999;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>New API</h1></center>
+            </div>
+            <div>
+                <form action="/createnewapi" method="post">
+                    <div>
+                        <button type="submit">Add</button>
+                    </div>
+                    <input type="hidden" name="service" value="{{ .ServiceName }}" />
+                    <div>
+                        <label>Service: {{ .ServiceName }}</label>
+                    </div>
+                    <div class="i9">
+                        <label>Description: </label>
+                        <input type="text" placeholder="Enter description" name="description" required>
+                    </div>
+                    <div class="i9">
+                        <label>Public Domain: </label>
+                        <input type="text" placeholder="Enter public domain" name="publicdomain" required>
+                    </div>
+                    <div class="i9">
+                        <label>Path match type:</label>
+                        <select name="matchtype" id="match-type">
+                            <option value="exact" selected>Exact</option>
+                            <option value="prefix">Prefix</option>
+                        </select>
+                    </div>
+                    <div class="i9">
+                        <label>Insert your OpenAPI spec here:</label>
+                        <textarea name="oas" cols="180" rows="50" required>
+---
+openapi: "3.1.0"
+info:
+  title: "Car Store API"
+  version: "1.0.0"
+                        </textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

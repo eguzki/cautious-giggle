@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"html/template"
 	"net/http"
 
@@ -46,41 +47,62 @@ func (a *NewApiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var newAPIData *NewAPIData
+	var templateName string
 	oasConfigmapName, ok := serviceObj.Annotations[utils.KuadrantDiscoveryAnnotationOASConfigMap]
-	if !ok {
-		http.Error(w, "service does not specify OAS configmap", http.StatusInternalServerError)
-		return
+	if ok {
+		var err error
+		newAPIData, err = a.readOASFromConfigMap(oasConfigmapName, serviceObj.Name)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		templateName = "newapi.html.tmpl"
+	} else {
+		newAPIData = &NewAPIData{
+			ServiceName: serviceObj.Name,
+		}
+		templateName = "newapi-oasform.html.tmpl"
 	}
 
-	oasConfigmap := &corev1.ConfigMap{}
-	oasConfigMapKey := client.ObjectKey{Name: oasConfigmapName, Namespace: serviceObj.Namespace}
-	err = a.K8sClient.Get(context.Background(), oasConfigMapKey, oasConfigmap)
+	t, err := template.ParseFS(giggletemplates.TemplatesFS, templateName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	if err := t.Execute(w, newAPIData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (a *NewApiHandler) readOASFromConfigMap(oasConfigmapName, serviceName string) (*NewAPIData, error) {
+	oasConfigmap := &corev1.ConfigMap{}
+	oasConfigMapKey := client.ObjectKey{Name: oasConfigmapName, Namespace: "default"}
+	err := a.K8sClient.Get(context.Background(), oasConfigMapKey, oasConfigmap)
+	if err != nil {
+		return nil, err
+	}
+
 	oasContent, ok := oasConfigmap.Data["openapi.yaml"]
 	if !ok {
-		http.Error(w, "oas configmap is missing the openapi.yaml entry", http.StatusInternalServerError)
-		return
+		return nil, errors.New("oas configmap is missing the openapi.yaml entry")
 	}
 
 	openapiLoader := openapi3.NewLoader()
 	doc, err := openapiLoader.LoadFromData([]byte(oasContent))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
 	err = doc.Validate(openapiLoader.Context)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
-	newAPIData := NewAPIData{
-		ServiceName: serviceObj.Name,
+	newAPIData := &NewAPIData{
+		ServiceName: serviceName,
 	}
 
 	for path, pathItem := range doc.Paths {
@@ -94,8 +116,7 @@ func (a *NewApiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					for secSchemeName := range secReq {
 						secSchemeI, err := doc.Components.SecuritySchemes.JSONLookup(secSchemeName)
 						if err != nil {
-							http.Error(w, err.Error(), http.StatusInternalServerError)
-							return
+							return nil, err
 						}
 
 						secScheme := secSchemeI.(*openapi3.SecurityScheme) // panic if assertion fails
@@ -112,14 +133,5 @@ func (a *NewApiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t, err := template.ParseFS(giggletemplates.TemplatesFS, "newapi.html.tmpl")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := t.Execute(w, newAPIData); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return newAPIData, nil
 }

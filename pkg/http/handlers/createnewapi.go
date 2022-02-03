@@ -51,32 +51,35 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	serviceKey := client.ObjectKey{Name: serviceName, Namespace: "default"}
-	serviceObj := &corev1.Service{}
-	err = a.K8sClient.Get(context.Background(), serviceKey, serviceObj)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	oasContent := r.FormValue("oas")
 
-	oasConfigmapName, ok := serviceObj.Annotations[utils.KuadrantDiscoveryAnnotationOASConfigMap]
-	if !ok {
-		http.Error(w, "service does not specify OAS configmap", http.StatusInternalServerError)
-		return
-	}
+	if oasContent == "" {
+		serviceKey := client.ObjectKey{Name: serviceName, Namespace: "default"}
+		serviceObj := &corev1.Service{}
+		err = a.K8sClient.Get(context.Background(), serviceKey, serviceObj)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		oasConfigmapName, ok := serviceObj.Annotations[utils.KuadrantDiscoveryAnnotationOASConfigMap]
+		if !ok {
+			http.Error(w, "service does not specify OAS configmap", http.StatusInternalServerError)
+			return
+		}
 
-	oasConfigmap := &corev1.ConfigMap{}
-	oasConfigMapKey := client.ObjectKey{Name: oasConfigmapName, Namespace: serviceObj.Namespace}
-	err = a.K8sClient.Get(context.Background(), oasConfigMapKey, oasConfigmap)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		oasConfigmap := &corev1.ConfigMap{}
+		oasConfigMapKey := client.ObjectKey{Name: oasConfigmapName, Namespace: serviceObj.Namespace}
+		err = a.K8sClient.Get(context.Background(), oasConfigMapKey, oasConfigmap)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	oasContent, ok := oasConfigmap.Data["openapi.yaml"]
-	if !ok {
-		http.Error(w, "oas configmap is missing the openapi.yaml entry", http.StatusInternalServerError)
-		return
+		oasContent, ok = oasConfigmap.Data["openapi.yaml"]
+		if !ok {
+			http.Error(w, "oas configmap is missing the openapi.yaml entry", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	desiredAPIObj := &gigglekuadrantiov1alpha1.Api{
@@ -86,7 +89,7 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      serviceName,
-			Namespace: serviceObj.Namespace,
+			Namespace: "default",
 		},
 		Spec: gigglekuadrantiov1alpha1.ApiSpec{
 			Description:   apiDescr,

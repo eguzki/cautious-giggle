@@ -126,6 +126,7 @@ func startHTTPService() {
 	createGatewaysHandler := &handlers.CreateGatewaysHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
+	mux.Handle("/", http.RedirectHandler("/login.html", 301))
 	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
 	mux.Handle("/dashboard", dashboardHandler)
 	mux.Handle("/servicediscovery", serviceDiscoveryHandler)
