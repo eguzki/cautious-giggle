@@ -119,23 +119,25 @@ func startHTTPService() {
 
 	dashboardHandler := &handlers.DashboardHandler{K8sClient: k8sClient}
 	serviceDiscoveryHandler := &handlers.ServiceDiscoveryHandler{K8sClient: k8sClient}
-	newApiHandler := &handlers.NewApiHandler{K8sClient: k8sClient}
+	newAPIHandler := &handlers.NewApiHandler{K8sClient: k8sClient}
 	createNewAPIHandler := &handlers.CreateNewAPIHandler{K8sClient: k8sClient}
 	aPIHandler := &handlers.APIHandler{K8sClient: k8sClient}
 	gatewaysHandler := &handlers.GatewaysHandler{K8sClient: k8sClient}
 	createGatewaysHandler := &handlers.CreateGatewaysHandler{K8sClient: k8sClient}
+	updateAPIGatewayHandler := &handlers.UpdateAPIGatewayHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.RedirectHandler("/login.html", 301))
 	mux.Handle("/login.html", http.FileServer(http.FS(html.LoginContent)))
 	mux.Handle("/dashboard", dashboardHandler)
 	mux.Handle("/servicediscovery", serviceDiscoveryHandler)
-	mux.Handle("/newapi", newApiHandler)
+	mux.Handle("/newapi", newAPIHandler)
 	mux.Handle("/createnewapi", createNewAPIHandler)
 	mux.Handle("/api", aPIHandler)
 	mux.Handle("/gateways", gatewaysHandler)
 	mux.Handle("/newgateway.html", http.FileServer(http.FS(html.NewGatewayContent)))
 	mux.Handle("/creategateway", createGatewaysHandler)
+	mux.Handle("/updateapigateway", updateAPIGatewayHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 

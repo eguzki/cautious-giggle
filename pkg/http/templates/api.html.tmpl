@@ -128,7 +128,7 @@
                                 <input type="hidden" name="api" value="{{ .Name }}" />
                                 {{range .Gateways }}
                                 <div>
-                                    <input type="radio" {{if eq $.Gateway .Name}}checked{{end}} id="{{ .Name }}" name="gw" value="{{ .Name }}">
+                                    <input type="radio" {{if eq $.Gateway .Name}}checked{{end}} id="{{ .Name }}" name="gw" value="{{ .Name }}" required>
                                     <label for="{{ .Name }}">{{ .Name }}</label>
                                 </div>
                                 {{end}}
