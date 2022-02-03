@@ -260,3 +260,4 @@ kuadrantctl: $(KUADRANTCTL)
 .PHONY : kuadrant-setup
 kuadrant-setup: $(KUADRANTCTL) cluster-setup
 	$(KUADRANTCTL) install
+	kubectl apply -f $(PROJECT_DIR)/utils/istio/gateway_rbac.yaml
