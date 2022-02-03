@@ -56,14 +56,12 @@
             <div class="apiTable">
                 <div class="apiTableHeading">
                     <div class="apiTableHead">Name</div>
-                    <div class="apiTableHead">Description</div>
                     <div class="apiTableHead">Labels</div>
                 </div>
                 {{range .}}
-                {{ $labels := .Spec.Labels }}
+                {{ $labels := .Labels }}
                 <div class="apiTableRow">
                     <div class="apiTableCell">{{ .Name }}</div>
-                    <div class="apiTableCell">{{ .Spec.Description }}</div>
                     <div class="apiTableCell">
                         {{range $k, $v := $labels}}
                             <div>{{ $k }}={{ $v }}</div>

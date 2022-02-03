@@ -249,4 +249,14 @@ cluster-cleanup: $(KIND)
 cluster-setup: $(KIND) cluster-cleanup
 	$(KIND) create cluster --name $(KIND_CLUSTER_NAME) --config utils/kind/cluster.yaml
 
+# kuadrantctl tool
+KUADRANTCTL = $(PROJECT_DIR)/bin/kuadrantctl
+$(KUADRANTCTL):
+	$(call go-get-tool,$(KUADRANTCTL),github.com/kuadrant/kuadrantctl@v0.1.0)
 
+.PHONY : kuadrantctl
+kuadrantctl: $(KUADRANTCTL)
+
+.PHONY : kuadrant-setup
+kuadrant-setup: $(KUADRANTCTL) cluster-setup
+	$(KUADRANTCTL) install

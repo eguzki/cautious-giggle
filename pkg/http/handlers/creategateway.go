@@ -4,10 +4,12 @@ import (
 	"context"
 	"net/http"
 
+	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
+	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
 type CreateGatewaysHandler struct {
@@ -29,12 +31,6 @@ func (a *CreateGatewaysHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	gwDescr := r.FormValue("description")
-	if gwDescr == "" {
-		http.Error(w, "form param description not found", http.StatusBadRequest)
-		return
-	}
-
 	labelKey1 := r.FormValue("labelkey1")
 	if labelKey1 == "" {
 		http.Error(w, "form param labelkey1 not found", http.StatusBadRequest)
@@ -47,37 +43,71 @@ func (a *CreateGatewaysHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	labelKey2 := r.FormValue("labelkey2")
-	if labelKey2 == "" {
-		http.Error(w, "form param labelkey2 not found", http.StatusBadRequest)
-		return
-	}
-
-	labelValue2 := r.FormValue("labelvalue2")
-	if labelValue2 == "" {
-		http.Error(w, "form param labelvalue2 not found", http.StatusBadRequest)
-		return
-	}
-
-	desiredGwObj := &gigglekuadrantiov1alpha1.Gateway{
+	gwDeployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Gateway",
-			APIVersion: gigglekuadrantiov1alpha1.GroupVersion.String(),
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      gwName,
 			Namespace: "default",
+			Labels:    map[string]string{utils.KuadrantGatewayLabel: "true"},
 		},
-		Spec: gigglekuadrantiov1alpha1.GatewaySpec{
-			Description: gwDescr,
-			Labels: map[string]string{
-				labelKey1: labelValue1,
-				labelKey2: labelValue2,
+		Spec: appsv1.DeploymentSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{labelKey1: labelValue1},
+			},
+			Template: v1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						// Set a unique label for the gateway. This is required to ensure Gateways can select this workload
+						labelKey1: labelValue1,
+						// Enable gateway injection. If connecting to a revisioned control plane, replace with "istio.io/rev: revision-name"
+						"sidecar.istio.io/inject": "true",
+					},
+					Annotations: map[string]string{
+						// Select the gateway injection template (rather than the default sidecar template)
+						"inject.istio.io/templates": "gateway",
+					},
+				},
+				Spec: v1.PodSpec{
+					Containers: []v1.Container{
+						v1.Container{
+							Name: "istio-proxy",
+							// The image will automatically update each time the pod starts.
+							Image: "auto",
+						},
+					},
+				},
 			},
 		},
 	}
 
-	if err := a.K8sClient.Create(context.Background(), desiredGwObj); err != nil {
+	if err := a.K8sClient.Create(context.Background(), gwDeployment); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	gwService := &v1.Service{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      gwName,
+			Namespace: "default",
+			Labels:    map[string]string{utils.KuadrantGatewayLabel: "true"},
+		},
+		Spec: v1.ServiceSpec{
+			Ports: []v1.ServicePort{
+				{Name: "http", Port: 80},
+				{Name: "https", Port: 443},
+			},
+			Selector: map[string]string{labelKey1: labelValue1},
+		},
+	}
+
+	if err := a.K8sClient.Create(context.Background(), gwService); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

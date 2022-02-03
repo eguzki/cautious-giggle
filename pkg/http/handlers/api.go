@@ -5,9 +5,10 @@ import (
 	"html/template"
 	"net/http"
 
+	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
+	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
 	"github.com/eguzki/cautious-giggle/pkg/utils"
 	"github.com/getkin/kin-openapi/openapi3"
@@ -19,10 +20,6 @@ type APIHandler struct {
 
 type Plan struct {
 	ID string
-}
-
-type Gateway struct {
-	Name string
 }
 
 type APIData struct {
@@ -48,7 +45,7 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	apiName := keys[0]
 	apikey := client.ObjectKey{Name: apiName, Namespace: "default"}
-	apiObj := &gigglekuadrantiov1alpha1.Api{}
+	apiObj := &gigglev1alpha1.Api{}
 	err := a.K8sClient.Get(context.Background(), apikey, apiObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -113,15 +110,15 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	gatewayList := &gigglekuadrantiov1alpha1.GatewayList{}
-	err = a.K8sClient.List(context.Background(), gatewayList)
+	serviceList := &corev1.ServiceList{}
+	err = a.K8sClient.List(context.Background(), serviceList, client.HasLabels{utils.KuadrantGatewayLabel})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	for idx := range gatewayList.Items {
-		aPIData.Gateways = append(aPIData.Gateways, Gateway{Name: gatewayList.Items[idx].Name})
+	for idx := range serviceList.Items {
+		aPIData.Gateways = append(aPIData.Gateways, Gateway{Name: serviceList.Items[idx].Name})
 	}
 
 	t, err := template.ParseFS(giggletemplates.TemplatesFS, "api.html.tmpl")
