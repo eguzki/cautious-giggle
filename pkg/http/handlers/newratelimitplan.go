@@ -11,6 +11,7 @@ import (
 
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
+	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
 type NewRLPlanOperation struct {
@@ -19,9 +20,10 @@ type NewRLPlanOperation struct {
 }
 
 type NewRLPlanData struct {
-	APIName    string
-	APIDomain  string
-	Operations []NewRLPlanOperation
+	APIName          string
+	APIDomain        string
+	AuthOperations   []NewRLPlanOperation
+	UnAuthOperations []NewRLPlanOperation
 }
 
 type NewRateLimitPlanHandler struct {
@@ -66,10 +68,17 @@ func (a *NewRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 
 	for path, pathItem := range doc.Paths {
 		for opVerb, operation := range pathItem.Operations() {
-			data.Operations = append(data.Operations, NewRLPlanOperation{
+			data.UnAuthOperations = append(data.UnAuthOperations, NewRLPlanOperation{
 				Operation:   fmt.Sprintf("%s %s", opVerb, path),
 				OperationID: operation.OperationID,
 			})
+
+			if operationIsSecured(doc, operation) {
+				data.AuthOperations = append(data.AuthOperations, NewRLPlanOperation{
+					Operation:   fmt.Sprintf("%s %s", opVerb, path),
+					OperationID: operation.OperationID,
+				})
+			}
 		}
 	}
 
@@ -83,4 +92,22 @@ func (a *NewRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func operationIsSecured(doc *openapi3.T, operation *openapi3.Operation) bool {
+	secReqsP := utils.OpenAPIOperationSecRequirements(doc, operation)
+
+	if secReqsP == nil {
+		return false
+	}
+	if len(*secReqsP) == 0 {
+		return false
+	}
+	for _, secReq := range *secReqsP {
+		if len(secReq) != 0 {
+			return true
+		}
+	}
+
+	return false
 }

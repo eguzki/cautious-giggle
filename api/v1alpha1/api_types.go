@@ -24,16 +24,16 @@ type RateLimitPlan struct {
 	// +optional
 	Daily *int32 `json:"global,omitempty"`
 	// +optional
-	Monthly *int32 `json:"global,omitempty"`
+	Monthly *int32 `json:"monthly,omitempty"`
 	// +optional
-	Eternity *int32 `json:"global,omitempty"`
+	Eternity *int32 `json:"eternity,omitempty"`
 }
 
 type AuthRateLimitPlan struct {
 	// +optional
 	Global *RateLimitPlan `json:"global,omitempty"`
 	// +optional
-	Operations map[string]RateLimitPlan `json:"operations,omitempty"`
+	Operations map[string]*RateLimitPlan `json:"operations,omitempty"`
 }
 
 type UnAuthRateLimitPlan struct {
@@ -42,7 +42,7 @@ type UnAuthRateLimitPlan struct {
 	// +optional
 	RemoteIP *RateLimitPlan `json:"remoteIP,omitempty"`
 	// +optional
-	Operations map[string]RateLimitPlan `json:"operations,omitempty"`
+	Operations map[string]*RateLimitPlan `json:"operations,omitempty"`
 }
 
 type ApiPlan struct {
@@ -51,6 +51,84 @@ type ApiPlan struct {
 	Auth *AuthRateLimitPlan `json:"auth,omitempty"`
 	// +optional
 	UnAuth *UnAuthRateLimitPlan `json:"unauth,omitempty"`
+}
+
+func (a *ApiPlan) SetUnAuthGlobalDaily(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.Global == nil {
+		a.UnAuth.Global = &RateLimitPlan{}
+	}
+	a.UnAuth.Global.Daily = &val
+}
+
+func (a *ApiPlan) SetUnAuthGlobalMonthly(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.Global == nil {
+		a.UnAuth.Global = &RateLimitPlan{}
+	}
+	a.UnAuth.Global.Monthly = &val
+}
+func (a *ApiPlan) SetUnAuthGlobalEternity(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.Global == nil {
+		a.UnAuth.Global = &RateLimitPlan{}
+	}
+	a.UnAuth.Global.Eternity = &val
+}
+
+func (a *ApiPlan) SetUnAuthRemoteIPDaily(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.RemoteIP == nil {
+		a.UnAuth.RemoteIP = &RateLimitPlan{}
+	}
+	a.UnAuth.RemoteIP.Daily = &val
+}
+
+func (a *ApiPlan) SetUnAuthRemoteIPMonthly(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.RemoteIP == nil {
+		a.UnAuth.RemoteIP = &RateLimitPlan{}
+	}
+	a.UnAuth.RemoteIP.Monthly = &val
+}
+func (a *ApiPlan) SetUnAuthRemoteIPEternity(val int32) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.RemoteIP == nil {
+		a.UnAuth.RemoteIP = &RateLimitPlan{}
+	}
+	a.UnAuth.RemoteIP.Eternity = &val
+}
+func (a *ApiPlan) SetUnAuthOperationEternity(val int32, operationID string) {
+	if a.UnAuth == nil {
+		a.UnAuth = &UnAuthRateLimitPlan{}
+	}
+
+	if a.UnAuth.Operations == nil {
+		a.UnAuth.Operations = map[string]*RateLimitPlan{}
+	}
+
+	if _, ok := a.UnAuth.Operations[operationID]; !ok {
+		a.UnAuth.Operations[operationID] = &RateLimitPlan{}
+	}
+	a.UnAuth.Operations[operationID].Eternity = &val
 }
 
 // ApiSpec defines the desired state of Api

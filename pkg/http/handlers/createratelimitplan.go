@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
+	"github.com/getkin/kin-openapi/openapi3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -53,17 +55,147 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	plan := gigglev1alpha1.ApiPlan{
+	plan := &gigglev1alpha1.ApiPlan{
 		Description: description,
 	}
 
 	// Fill plan
+	err = setPlanValue(r.FormValue("rl-unauth-global-daily"), plan.SetUnAuthGlobalDaily)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-global-monthly"), plan.SetUnAuthGlobalMonthly)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-global-eternity"), plan.SetUnAuthGlobalEternity)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-daily"), plan.SetUnAuthRemoteIPDaily)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-monthly"), plan.SetUnAuthRemoteIPMonthly)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-eternity"), plan.SetUnAuthRemoteIPEternity)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	openapiLoader := openapi3.NewLoader()
+	doc, err := openapiLoader.LoadFromData([]byte(apiObj.Spec.OAS))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = doc.Validate(openapiLoader.Context)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, pathItem := range doc.Paths {
+		for _, operation := range pathItem.Operations() {
+			err := setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-daily", operation.OperationID)),
+				operation.OperationID,
+				plan.SetUnAuthOperationDaily,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-monthly", operation.OperationID)),
+				operation.OperationID,
+				plan.SetUnAuthOperationMonthly,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-eternity", operation.OperationID)),
+				operation.OperationID,
+				plan.SetUnAuthOperationEternity,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
+	}
+
+	err = setPlanValue(r.FormValue("rl-auth-global-daily"), plan.SetAuthGlobalDaily)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-auth-global-monthly"), plan.SetAuthGlobalMonthly)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-auth-global-eternity"), plan.SetAuthGlobalEternity)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for _, pathItem := range doc.Paths {
+		for _, operation := range pathItem.Operations() {
+			err := setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-auth-%s-daily", operation.OperationID)),
+				operation.OperationID,
+				plan.SetAuthOperationDaily,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-auth-%s-monthly", operation.OperationID)),
+				operation.OperationID,
+				plan.SetAuthOperationMonthly,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-auth-%s-eternity", operation.OperationID)),
+				operation.OperationID,
+				plan.SetAuthOperationEternity,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
+	}
 
 	if apiObj.Spec.Plans == nil {
 		apiObj.Spec.Plans = map[string]gigglev1alpha1.ApiPlan{}
 	}
 
-	apiObj.Spec.Plans[name] = plan
+	apiObj.Spec.Plans[name] = *plan
 	err = a.K8sClient.Update(context.Background(), apiObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,4 +203,26 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/api?id=%s", apiName), http.StatusFound)
+}
+
+func setPlanValue(valStr string, cb func(val int32)) error {
+	if valStr != "" && valStr != "0" {
+		tmp64, err := strconv.ParseInt(valStr, 10, 32)
+		if err != nil {
+			return err
+		}
+		cb(int32(tmp64))
+	}
+	return nil
+}
+
+func setPlanOperationValue(valStr, operationID string, cb func(val int32, operationID string)) error {
+	if valStr != "" && valStr != "0" {
+		tmp64, err := strconv.ParseInt(valStr, 10, 32)
+		if err != nil {
+			return err
+		}
+		cb(int32(tmp64), operationID)
+	}
+	return nil
 }
