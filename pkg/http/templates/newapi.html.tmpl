@@ -14,6 +14,13 @@
         .i9 {
           height: 320px;
         }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
+        }
         .apiTable{
             display: table;
             width: 100%;
@@ -55,6 +62,11 @@
         <div class="container">
             <div class="i8">
                 <center><h1>New API</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
             </div>
             <div class="i9">
                 <form action="/createnewapi" method="post">

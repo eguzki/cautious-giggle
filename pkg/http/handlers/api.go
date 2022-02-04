@@ -64,8 +64,8 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		aPIData.Gateway = *apiObj.Spec.Gateway
 	}
 
-	for idx := range apiObj.Spec.Plans {
-		aPIData.Plans = append(aPIData.Plans, Plan{ID: apiObj.Spec.Plans[idx].ID})
+	for planName := range apiObj.Spec.Plans {
+		aPIData.Plans = append(aPIData.Plans, Plan{ID: planName})
 	}
 
 	openapiLoader := openapi3.NewLoader()

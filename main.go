@@ -140,6 +140,7 @@ func startHTTPService() {
 	mux.Handle("/creategateway", createGatewaysHandler)
 	mux.Handle("/updateapigateway", updateAPIGatewayHandler)
 	mux.Handle("/newratelimitplan", newRateLimitPlanHandler)
+	mux.Handle("/createratelimitplan", newRateLimitPlanHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 

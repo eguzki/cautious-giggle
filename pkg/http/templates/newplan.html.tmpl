@@ -11,6 +11,13 @@
         .i8 {
           height: 75px;
         }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
+        }
         .info {
           height: 70px;
         }
@@ -85,6 +92,11 @@
             <div class="i8">
                 <center><h1>New Rate Limit Plan</h1></center>
             </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
+            </div>
             <div class="info">
                 <div class="i9">
                     <label>API: {{ .APIName }}</label>
@@ -94,7 +106,7 @@
                 </div>
             </div>
             <div class="plan">
-                <form action="/createnewratelimitplan" method="post">
+                <form action="/createratelimitplan" method="post">
                     <input type="hidden" name="api" value="{{ .APIName }}" />
                     <div class="unauthTable">
                         <div class="unauthTableRow">
@@ -171,6 +183,18 @@
                             <div class="authTableHead">Daily</div>
                             <div class="authTableHead">Monthly</div>
                             <div class="authTableHead">Eternity</div>
+                        </div>
+                        <div class="authTableRow">
+                            <div class="unauthTableCell">Global</div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="rl-auth-global-daily">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="rl-auth-global-monthly">
+                            </div>
+                            <div class="unauthTableCell">
+                                <input type="text" value="0" name="rl-auth-global-eternity">
+                            </div>
                         </div>
                         {{range .Operations }}
                         <div class="authTableRow">

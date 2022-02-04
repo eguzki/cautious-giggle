@@ -9,10 +9,18 @@
             margin: auto;
         }
         .i8 {
-          height: 75px;
+            padding: 10px;
         }
         .i9 {
-          height: 50px;
+            padding: 10px;
+            text-align: center;
+        }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
         }
         .apiTable{
             display: table;
@@ -47,6 +55,10 @@
         <div class="container">
             <div class="i8">
                 <center><h1>MY APIs</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
             </div>
             <div class="i9">
                 <form id="newapiform" action="/servicediscovery">
