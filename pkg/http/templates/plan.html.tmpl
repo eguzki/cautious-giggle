@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant Rate Limit Plan</title>
+        <style>
+        .container {
+            width: 50%;
+            margin: auto;
+        }
+        .i8 {
+          height: 75px;
+        }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
+        }
+        .unauthTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1em;
+        }
+        .unauthTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .unauthTableHead{
+            display: table-cell;
+        }
+        .unauthTableRow{
+            display: table-row;
+        }
+        .unauthTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .authTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1em;
+        }
+        .authTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .authTableHead{
+            display: table-cell;
+        }
+        .authTableRow{
+            display: table-row;
+        }
+        .authTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        #updatePlanButton {
+            background-color: #4CAF50;
+            width: 10%;
+            color: orange;
+            padding: 15px;
+            margin: 10px 0px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type=text] {
+            width: 50%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        button {
+          float: right;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>Rate Limit Plan</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
+            </div>
+            <div class="plan">
+                <div class="unauthTable">
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">Name</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .Name }}</label>
+                        </div>
+                    </div>
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">Description</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .Description }}</label>
+                        </div>
+                    </div>
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">API</div>
+                        <div class="unauthTableCell">
+                            <label><a href="/api?id={{ .APIName }}">{{ .APIName }}</a></label>
+                        </div>
+                    </div>
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">Public Domain</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .APIDomain }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <center><h3>Unauthenticated Rate Limit</h3></center>
+                </div>
+                <div class="unauthTable">
+                    <div class="unauthTableHeading">
+                        <div class="unauthTableHead">Target</div>
+                        <div class="unauthTableHead">Daily</div>
+                        <div class="unauthTableHead">Monthly</div>
+                        <div class="unauthTableHead">Eternity</div>
+                    </div>
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">Global</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthGlobalDaily }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthGlobalMonthly }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthGlobalEternity }}</label>
+                        </div>
+                    </div>
+                    <div class="unauthTableRow">
+                        <div class="unauthTableCell">Remote IP</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthRemoteIPDaily }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthRemoteIPMonthly }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .UnAuthRemoteIPEternity }}</label>
+                        </div>
+                    </div>
+                    {{range .UnAuthOperations }}
+                    <div class="authTableRow">
+                        <div class="authTableCell">{{ .Operation }}</div>
+                        <div class="authTableCell">
+                            <label>{{ .Daily }}</label>
+                        </div>
+                        <div class="authTableCell">
+                            <label>{{ .Monthly }}</label>
+                        </div>
+                        <div class="authTableCell">
+                            <label>{{ .Eternity }}</label>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div>
+                    <center><h3>Authenticated Rate Limit</h3></center>
+                </div>
+                <div class="authTable">
+                    <div class="unauthTableHeading">
+                        <div class="authTableHead">Target</div>
+                        <div class="authTableHead">Daily</div>
+                        <div class="authTableHead">Monthly</div>
+                        <div class="authTableHead">Eternity</div>
+                    </div>
+                    <div class="authTableRow">
+                        <div class="unauthTableCell">Global</div>
+                        <div class="unauthTableCell">
+                            <label>{{ .AuthGlobalDaily }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .AuthGlobalMonthly }}</label>
+                        </div>
+                        <div class="unauthTableCell">
+                            <label>{{ .AuthGlobalEternity }}</label>
+                        </div>
+                    </div>
+                    {{range .AuthOperations }}
+                    <div class="authTableRow">
+                        <div class="authTableCell">{{ .Operation }}</div>
+                        <div class="authTableCell">
+                            <label>{{ .Daily }}</label>
+                        </div>
+                        <div class="authTableCell">
+                            <label>{{ .Monthly }}</label>
+                        </div>
+                        <div class="authTableCell">
+                            <label>{{ .Eternity }}</label>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

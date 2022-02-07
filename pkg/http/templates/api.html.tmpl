@@ -14,6 +14,13 @@
         .i9 {
           height: 150px;
         }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
+        }
         .apiTable{
             display: table;
             width: 100%;
@@ -73,6 +80,11 @@
             <div class="i8">
                 <center><h1>API {{ .Name }}</h1></center>
             </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
+            </div>
             <div class="i9">
                 <p><label>Service: {{ .ServiceName }}</label></p>
                 <p><label>Description: {{ .Description }}</label></p>
@@ -121,29 +133,26 @@
                 <div>
                     <center><h3>Gateways</h3></center>
                 </div>
-                <div class="gwTable">
-                    <div class="gwRow">
-                        <div class="gwCell">
-                            <form id="updateGwForm" method="post" action="/updateapigateway">
-                                <input type="hidden" name="api" value="{{ .Name }}" />
-                                {{range .Gateways }}
-                                <div>
-                                    <input type="radio" {{if eq $.Gateway .Name}}checked{{end}} id="{{ .Name }}" name="gw" value="{{ .Name }}" required>
-                                    <label for="{{ .Name }}">{{ .Name }}</label>
-                                </div>
-                                {{end}}
-                                <div>
-                                    <button type="submit">Link Gateway</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="gwCell">
-                            <form method="get" action="/gateways">
-                                <button type="submit">Manage Gateways</button>
-                            </form>
+                <form id="updateGwForm" method="post" action="/updateapigateway">
+                    <div class="gwTable">
+                        <div class="gwRow">
+                            <div class="gwCell">
+                                    <input type="hidden" name="api" value="{{ .Name }}" />
+                                    {{range .Gateways }}
+                                    <div>
+                                        <input type="radio" {{if eq $.Gateway .Name}}checked{{end}} id="{{ .Name }}" name="gw" value="{{ .Name }}" required>
+                                        <label for="{{ .Name }}">{{ .Name }}</label>
+                                    </div>
+                                    {{end}}
+                                    <div>
+                                    </div>
+                            </div>
+                            <div class="gwCell">
+                                <button type="submit">Link Gateway</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </body>

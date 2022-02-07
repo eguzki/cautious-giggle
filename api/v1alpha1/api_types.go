@@ -22,7 +22,7 @@ import (
 
 type RateLimitPlan struct {
 	// +optional
-	Daily *int32 `json:"global,omitempty"`
+	Daily *int32 `json:"daily,omitempty"`
 	// +optional
 	Monthly *int32 `json:"monthly,omitempty"`
 	// +optional
@@ -36,6 +36,25 @@ type AuthRateLimitPlan struct {
 	Operations map[string]*RateLimitPlan `json:"operations,omitempty"`
 }
 
+func (a *AuthRateLimitPlan) GetGlobal() *RateLimitPlan {
+	if a.Global == nil {
+		a.Global = &RateLimitPlan{}
+	}
+	return a.Global
+}
+
+func (a *AuthRateLimitPlan) GetOperation(operationID string) *RateLimitPlan {
+	if a.Operations == nil {
+		a.Operations = map[string]*RateLimitPlan{}
+	}
+
+	if _, ok := a.Operations[operationID]; !ok {
+		a.Operations[operationID] = &RateLimitPlan{}
+	}
+
+	return a.Operations[operationID]
+}
+
 type UnAuthRateLimitPlan struct {
 	// +optional
 	Global *RateLimitPlan `json:"global,omitempty"`
@@ -43,6 +62,32 @@ type UnAuthRateLimitPlan struct {
 	RemoteIP *RateLimitPlan `json:"remoteIP,omitempty"`
 	// +optional
 	Operations map[string]*RateLimitPlan `json:"operations,omitempty"`
+}
+
+func (u *UnAuthRateLimitPlan) GetGlobal() *RateLimitPlan {
+	if u.Global == nil {
+		u.Global = &RateLimitPlan{}
+	}
+	return u.Global
+}
+
+func (u *UnAuthRateLimitPlan) GetRemoteIP() *RateLimitPlan {
+	if u.RemoteIP == nil {
+		u.RemoteIP = &RateLimitPlan{}
+	}
+	return u.RemoteIP
+}
+
+func (u *UnAuthRateLimitPlan) GetOperation(operationID string) *RateLimitPlan {
+	if u.Operations == nil {
+		u.Operations = map[string]*RateLimitPlan{}
+	}
+
+	if _, ok := u.Operations[operationID]; !ok {
+		u.Operations[operationID] = &RateLimitPlan{}
+	}
+
+	return u.Operations[operationID]
 }
 
 type ApiPlan struct {
@@ -53,82 +98,78 @@ type ApiPlan struct {
 	UnAuth *UnAuthRateLimitPlan `json:"unauth,omitempty"`
 }
 
-func (a *ApiPlan) SetUnAuthGlobalDaily(val int32) {
+func (a *ApiPlan) GetAuth() *AuthRateLimitPlan {
+	if a.Auth == nil {
+		a.Auth = &AuthRateLimitPlan{}
+	}
+	return a.Auth
+}
+
+func (a *ApiPlan) GetUnAuth() *UnAuthRateLimitPlan {
 	if a.UnAuth == nil {
 		a.UnAuth = &UnAuthRateLimitPlan{}
 	}
+	return a.UnAuth
+}
 
-	if a.UnAuth.Global == nil {
-		a.UnAuth.Global = &RateLimitPlan{}
-	}
-	a.UnAuth.Global.Daily = &val
+func (a *ApiPlan) SetUnAuthGlobalDaily(val int32) {
+	a.GetUnAuth().GetGlobal().Daily = &val
 }
 
 func (a *ApiPlan) SetUnAuthGlobalMonthly(val int32) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
-
-	if a.UnAuth.Global == nil {
-		a.UnAuth.Global = &RateLimitPlan{}
-	}
-	a.UnAuth.Global.Monthly = &val
+	a.GetUnAuth().GetGlobal().Monthly = &val
 }
-func (a *ApiPlan) SetUnAuthGlobalEternity(val int32) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
 
-	if a.UnAuth.Global == nil {
-		a.UnAuth.Global = &RateLimitPlan{}
-	}
-	a.UnAuth.Global.Eternity = &val
+func (a *ApiPlan) SetUnAuthGlobalEternity(val int32) {
+	a.GetUnAuth().GetGlobal().Eternity = &val
 }
 
 func (a *ApiPlan) SetUnAuthRemoteIPDaily(val int32) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
-
-	if a.UnAuth.RemoteIP == nil {
-		a.UnAuth.RemoteIP = &RateLimitPlan{}
-	}
-	a.UnAuth.RemoteIP.Daily = &val
+	a.GetUnAuth().GetRemoteIP().Daily = &val
 }
 
 func (a *ApiPlan) SetUnAuthRemoteIPMonthly(val int32) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
-
-	if a.UnAuth.RemoteIP == nil {
-		a.UnAuth.RemoteIP = &RateLimitPlan{}
-	}
-	a.UnAuth.RemoteIP.Monthly = &val
+	a.GetUnAuth().GetRemoteIP().Monthly = &val
 }
+
 func (a *ApiPlan) SetUnAuthRemoteIPEternity(val int32) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
-
-	if a.UnAuth.RemoteIP == nil {
-		a.UnAuth.RemoteIP = &RateLimitPlan{}
-	}
-	a.UnAuth.RemoteIP.Eternity = &val
+	a.GetUnAuth().GetRemoteIP().Eternity = &val
 }
+
 func (a *ApiPlan) SetUnAuthOperationEternity(val int32, operationID string) {
-	if a.UnAuth == nil {
-		a.UnAuth = &UnAuthRateLimitPlan{}
-	}
+	a.GetUnAuth().GetOperation(operationID).Eternity = &val
+}
 
-	if a.UnAuth.Operations == nil {
-		a.UnAuth.Operations = map[string]*RateLimitPlan{}
-	}
+func (a *ApiPlan) SetUnAuthOperationDaily(val int32, operationID string) {
+	a.GetUnAuth().GetOperation(operationID).Daily = &val
+}
 
-	if _, ok := a.UnAuth.Operations[operationID]; !ok {
-		a.UnAuth.Operations[operationID] = &RateLimitPlan{}
-	}
-	a.UnAuth.Operations[operationID].Eternity = &val
+func (a *ApiPlan) SetUnAuthOperationMonthly(val int32, operationID string) {
+	a.GetUnAuth().GetOperation(operationID).Monthly = &val
+}
+
+func (a *ApiPlan) SetAuthGlobalDaily(val int32) {
+	a.GetAuth().GetGlobal().Daily = &val
+}
+
+func (a *ApiPlan) SetAuthGlobalMonthly(val int32) {
+	a.GetAuth().GetGlobal().Monthly = &val
+}
+
+func (a *ApiPlan) SetAuthGlobalEternity(val int32) {
+	a.GetAuth().GetGlobal().Eternity = &val
+}
+
+func (a *ApiPlan) SetAuthOperationDaily(val int32, operationID string) {
+	a.GetAuth().GetOperation(operationID).Daily = &val
+}
+
+func (a *ApiPlan) SetAuthOperationMonthly(val int32, operationID string) {
+	a.GetAuth().GetOperation(operationID).Monthly = &val
+}
+
+func (a *ApiPlan) SetAuthOperationEternity(val int32, operationID string) {
+	a.GetAuth().GetOperation(operationID).Eternity = &val
 }
 
 // ApiSpec defines the desired state of Api
@@ -140,7 +181,7 @@ type ApiSpec struct {
 	ServiceName   string `json:"servicename"`
 
 	// +optional
-	Plans map[string]ApiPlan `json:"plans,omitempty"`
+	Plans map[string]*ApiPlan `json:"plans,omitempty"`
 	// +optional
 	Gateway *string `json:"gateway,omitempty"`
 }

@@ -126,6 +126,8 @@ func startHTTPService() {
 	createGatewaysHandler := &handlers.CreateGatewaysHandler{K8sClient: k8sClient}
 	updateAPIGatewayHandler := &handlers.UpdateAPIGatewayHandler{K8sClient: k8sClient}
 	newRateLimitPlanHandler := &handlers.NewRateLimitPlanHandler{K8sClient: k8sClient}
+	createRateLimitPlanHandler := &handlers.CreateRateLimitPlanHandler{K8sClient: k8sClient}
+	planHandler := &handlers.PlanHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.RedirectHandler("/login.html", 301))
@@ -140,7 +142,8 @@ func startHTTPService() {
 	mux.Handle("/creategateway", createGatewaysHandler)
 	mux.Handle("/updateapigateway", updateAPIGatewayHandler)
 	mux.Handle("/newratelimitplan", newRateLimitPlanHandler)
-	mux.Handle("/createratelimitplan", newRateLimitPlanHandler)
+	mux.Handle("/createratelimitplan", createRateLimitPlanHandler)
+	mux.Handle("/plan", planHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 

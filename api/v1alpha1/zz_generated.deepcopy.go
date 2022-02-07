@@ -113,9 +113,17 @@ func (in *ApiSpec) DeepCopyInto(out *ApiSpec) {
 	*out = *in
 	if in.Plans != nil {
 		in, out := &in.Plans, &out.Plans
-		*out = make(map[string]ApiPlan, len(*in))
+		*out = make(map[string]*ApiPlan, len(*in))
 		for key, val := range *in {
-			(*out)[key] = *val.DeepCopy()
+			var outVal *ApiPlan
+			if val == nil {
+				(*out)[key] = nil
+			} else {
+				in, out := &val, &outVal
+				*out = new(ApiPlan)
+				(*in).DeepCopyInto(*out)
+			}
+			(*out)[key] = outVal
 		}
 	}
 	if in.Gateway != nil {

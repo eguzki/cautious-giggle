@@ -12,4 +12,5 @@ import (
 //go:embed api.html.tmpl
 //go:embed gateways.html.tmpl
 //go:embed newplan.html.tmpl
+//go:embed plan.html.tmpl
 var TemplatesFS embed.FS

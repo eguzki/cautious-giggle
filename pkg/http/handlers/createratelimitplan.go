@@ -26,7 +26,7 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 
 	apiName := r.FormValue("api")
 	if apiName == "" {
-		http.Error(w, "form param api not found", http.StatusBadRequest)
+		http.Error(w, "form param api not found.", http.StatusBadRequest)
 		return
 	}
 
@@ -192,10 +192,10 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 	}
 
 	if apiObj.Spec.Plans == nil {
-		apiObj.Spec.Plans = map[string]gigglev1alpha1.ApiPlan{}
+		apiObj.Spec.Plans = map[string]*gigglev1alpha1.ApiPlan{}
 	}
 
-	apiObj.Spec.Plans[name] = *plan
+	apiObj.Spec.Plans[name] = plan
 	err = a.K8sClient.Update(context.Background(), apiObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

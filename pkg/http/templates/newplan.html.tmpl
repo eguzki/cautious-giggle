@@ -99,7 +99,7 @@
             </div>
             <div class="info">
                 <div class="i9">
-                    <label>API: {{ .APIName }}</label>
+                    <label>API: <a href="/api?id={{ .APIName }}">{{ .APIName }}</a></label>
                 </div>
                 <div class="i9">
                     <label>Public Domain: {{ .APIDomain }}</label>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="unauthTable">
                         <div class="unauthTableHeading">
-                            <div class="unauthTableHead">Operation</div>
+                            <div class="unauthTableHead">Target</div>
                             <div class="unauthTableHead">Daily</div>
                             <div class="unauthTableHead">Monthly</div>
                             <div class="unauthTableHead">Eternity</div>
@@ -179,7 +179,7 @@
                     </div>
                     <div class="authTable">
                         <div class="unauthTableHeading">
-                            <div class="authTableHead">Operation</div>
+                            <div class="authTableHead">Target</div>
                             <div class="authTableHead">Daily</div>
                             <div class="authTableHead">Monthly</div>
                             <div class="authTableHead">Eternity</div>
