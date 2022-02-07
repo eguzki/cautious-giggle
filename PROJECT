@@ -24,4 +24,12 @@ resources:
   kind: Gateway
   path: github.com/eguzki/cautious-giggle/api/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: giggle.kuadrant.io
+  group: giggle.kuadrant.io
+  kind: User
+  path: github.com/eguzki/cautious-giggle/api/v1alpha1
+  version: v1alpha1
 version: "3"

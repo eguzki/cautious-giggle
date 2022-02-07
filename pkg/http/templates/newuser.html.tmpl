@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Kuadrant User</title>
+        <title>Kuadrant API Consumer</title>
         <style>
         .container {
             width: 70%;
@@ -13,6 +13,13 @@
         }
         .i9 {
             height: 50px;
+        }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
         }
         .apiTable{
             display: table;
@@ -57,10 +64,15 @@
     <body>
         <div class="container">
             <div class="i8">
-                <center><h1>User</h1></center>
+                <center><h1>API Consumer</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
             </div>
             <div class="user">
-                <form action="/createnewuser" method="post" target="_blank">
+                <form action="/createuser" method="post">
                     <div>
                         <div class="apiTable">
                             <div class="apiTableRow">
@@ -70,14 +82,15 @@
                                 </div>
                             </div>
                             <div class="apiTableRow">
-                                <div class="apiTableCell">Userid</div>
+                                <div class="apiTableCell">ID</div>
                                 <div class="apiTableCell">
-                                    <input type="text" placeholder="Enter user ID" name="userid" required>
+                                    <input type="text" placeholder="Enter ID" name="id" required>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <div>
-                        <button type="submit">Update User</button>
+                        <button type="submit">Create API Consumer</button>
                     </div>
                     <div>
                         <div class="apiTable">
@@ -85,27 +98,20 @@
                                 <div class="apiTableHead">API</div>
                                 <div class="apiTableHead">Plan</div>
                             </div>
+                            {{range .APIs }}
+                            {{ $api := .APIName }}
                             <div class="apiTableRow">
-                                <div class="apiTableCell">API 1</div>
+                                <div class="apiTableCell">API: {{ .APIName }}</div>
                                 <div class="apiTableCell">
-                                    <select name="api1plans" id="api1plans">
+                                    <select name="{{ .APIName }}plan" id="{{ .APIName }}plan">
                                         <option value="-">-</option>
-                                        <option value="api1-plan1">Plan 1</option>
-                                        <option value="api1-plan2">Plan 2</option>
-                                        <option value="api1-plan3">Plan 3</option>
+                                        {{range .Plans }}
+                                        <option value="{{ .Name }}">{{ .Name }}</option>
+                                        {{end}}
                                     </select>
                                 </div>
                             </div>
-                            <div class="apiTableRow">
-                                <div class="apiTableCell">API 2</div>
-                                <div class="apiTableCell">
-                                    <select name="api1plans" id="api1plans">
-                                        <option value="-">-</option>
-                                        <option value="api2-plan1">Plan 1</option>
-                                        <option value="api2-plan2">Plan 2</option>
-                                    </select>
-                                </div>
-                            </div>
+                            {{end}}
                         </div>
                     </div>
                 </form>

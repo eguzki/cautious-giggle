@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kuadrant API Consumer</title>
+        <style>
+        .container {
+            width: 70%;
+            margin: auto;
+        }
+        .i8 {
+            height: 75px;
+        }
+        .i9 {
+            height: 50px;
+        }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
+        }
+        .apiTable{
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2em;
+        }
+        .apiTableHeading{
+            display: table-header-group;
+            font-weight: bold;
+        }
+        .apiTableHead{
+            display: table-cell;
+        }
+        .apiTableCell{
+            display: table-cell;
+            padding: 3px 10px;
+        }
+        .apiTableRow{
+            display: table-row;
+        }
+        #newapiform {
+          float: right;
+        }
+        Body {
+          font-family: Calibri, Helvetica, sans-serif;
+          background-color: lightblue;
+        }
+        input[type=text] {
+            width: 50%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            border: 2px solid green;
+            box-sizing: border-box;
+        }
+        button {
+          float: right;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="i8">
+                <center><h1>API Consumer</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
+                <a href="/users">My API Consumers</a>
+            </div>
+            <div class="user">
+                <div>
+                    <div class="apiTable">
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">Name</div>
+                            <div class="apiTableCell">{{ .Name }}</div>
+                        </div>
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">ID</div>
+                            <div class="apiTableCell">{{ .ID }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="apiTable">
+                        <div class="apiTableHeading">
+                            <div class="apiTableHead">API</div>
+                            <div class="apiTableHead">Plan</div>
+                        </div>
+                        {{range .APIs }}
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">{{ .APIName }}</div>
+                            <div class="apiTableCell">{{ .PlanName }}</div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

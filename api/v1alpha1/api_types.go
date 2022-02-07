@@ -129,6 +129,9 @@ type ApiSpec struct {
 	Plans map[string]*ApiPlan `json:"plans,omitempty"`
 	// +optional
 	Gateway *string `json:"gateway,omitempty"`
+	// UserPlan userID -> planID
+	// +optional
+	UserPlan map[string]string `json:"users,omitempty"`
 }
 
 func (a *ApiSpec) GetUnAuthRateLimit() *UnAuthRateLimitConf {

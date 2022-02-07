@@ -47,7 +47,7 @@ var _ http.Handler = &APIHandler{}
 func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	keys, ok := r.URL.Query()["id"]
 	if !ok || len(keys[0]) < 1 {
-		http.Error(w, "url param api not found", http.StatusBadRequest)
+		http.Error(w, "url param id not found", http.StatusBadRequest)
 		return
 	}
 

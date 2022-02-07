@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Kuadrant Users</title>
+        <title>Kuadrant API Consumers</title>
         <style>
         .container {
             width: 70%;
@@ -13,6 +13,13 @@
         }
         .i9 {
           height: 75px;
+        }
+        .nav {
+            padding: 10px;
+            text-align: center;
+        }
+        .nav a {
+            padding: 3px 8px;
         }
         .apiTable{
             display: table;
@@ -34,9 +41,6 @@
         .apiTableRow{
             display: table-row;
         }
-        .itemList{
-
-        }
         #newuserform {
           float: right;
         }
@@ -49,30 +53,28 @@
     <body>
         <div class="container">
             <div class="i8">
-                <center><h1>Users</h1></center>
+                <center><h1>MY API CONSUMERS</h1></center>
+            </div>
+            <div class="nav">
+                <a href="/dashboard">My APIs</a>
+                <a href="/gateways">My Gateways</a>
             </div>
             <div class="i9">
-                <form id="newuserform" action="/newuser" target="_blank">
-                    <button type="submit">Create User</button>
+                <form id="newuserform" method="get" action="/newuser">
+                    <button type="submit">Create New API Consumer</button>
                 </form>
             </div>
             <div class="apiTable">
                 <div class="apiTableHeading">
                     <div class="apiTableHead">Name</div>
-                    <div class="apiTableHead">User ID</div>
+                    <div class="apiTableHead">ID</div>
                 </div>
+                {{range .}}
                 <div class="apiTableRow">
-                    <div class="apiTableCell"><a href="/user?id=user1">User 1</a></div>
-                    <div class="apiTableCell">user1</div>
+                    <div class="apiTableCell"><a href="/user?id={{ .Name }}">{{ .Spec.LongName }}</a></div>
+                    <div class="apiTableCell">{{ .Name }}</div>
                 </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell"><a href="/user?id=user2">User 2</a></div>
-                    <div class="apiTableCell">user2</div>
-                </div>
-                <div class="apiTableRow">
-                    <div class="apiTableCell"><a href="/user?id=user3">User 3</a></div>
-                    <div class="apiTableCell">user3</div>
-                </div>
+                {{end}}
             </div>
         </div>
     </body>

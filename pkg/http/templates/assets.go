@@ -13,4 +13,7 @@ import (
 //go:embed gateways.html.tmpl
 //go:embed newplan.html.tmpl
 //go:embed plan.html.tmpl
+//go:embed users.html.tmpl
+//go:embed newuser.html.tmpl
+//go:embed user.html.tmpl
 var TemplatesFS embed.FS

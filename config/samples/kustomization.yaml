@@ -2,4 +2,5 @@
 resources:
 - giggle.kuadrant.io_v1alpha1_api.yaml
 - giggle.kuadrant.io_v1alpha1_gateway.yaml
+- giggle.kuadrant.io_v1alpha1_user.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
