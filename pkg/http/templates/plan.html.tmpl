@@ -18,26 +18,6 @@
         .nav a {
             padding: 3px 8px;
         }
-        .unauthTable{
-            display: table;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 1em;
-        }
-        .unauthTableHeading{
-            display: table-header-group;
-            font-weight: bold;
-        }
-        .unauthTableHead{
-            display: table-cell;
-        }
-        .unauthTableRow{
-            display: table-row;
-        }
-        .unauthTableCell{
-            display: table-cell;
-            padding: 3px 10px;
-        }
         .authTable{
             display: table;
             width: 100%;
@@ -95,100 +75,48 @@
                 <a href="/users">My API Consumers</a>
             </div>
             <div class="plan">
-                <div class="unauthTable">
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">Name</div>
-                        <div class="unauthTableCell">
+                <div class="authTable">
+                    <div class="authTableRow">
+                        <div class="authTableCell">Name</div>
+                        <div class="authTableCell">
                             <label>{{ .Name }}</label>
                         </div>
                     </div>
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">Description</div>
-                        <div class="unauthTableCell">
+                    <div class="authTableRow">
+                        <div class="authTableCell">Description</div>
+                        <div class="authTableCell">
                             <label>{{ .Description }}</label>
                         </div>
                     </div>
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">API</div>
-                        <div class="unauthTableCell">
+                    <div class="authTableRow">
+                        <div class="authTableCell">API</div>
+                        <div class="authTableCell">
                             <label><a href="/api?id={{ .APIName }}">{{ .APIName }}</a></label>
                         </div>
                     </div>
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">Public Domain</div>
-                        <div class="unauthTableCell">
+                    <div class="authTableRow">
+                        <div class="authTableCell">Public Domain</div>
+                        <div class="authTableCell">
                             <label>{{ .APIDomain }}</label>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <center><h3>Unauthenticated Rate Limit</h3></center>
-                </div>
-                <div class="unauthTable">
-                    <div class="unauthTableHeading">
-                        <div class="unauthTableHead">Target</div>
-                        <div class="unauthTableHead">Daily</div>
-                        <div class="unauthTableHead">Monthly</div>
-                        <div class="unauthTableHead">Eternity</div>
-                    </div>
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">Global</div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthGlobalDaily }}</label>
-                        </div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthGlobalMonthly }}</label>
-                        </div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthGlobalEternity }}</label>
-                        </div>
-                    </div>
-                    <div class="unauthTableRow">
-                        <div class="unauthTableCell">Remote IP</div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthRemoteIPDaily }}</label>
-                        </div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthRemoteIPMonthly }}</label>
-                        </div>
-                        <div class="unauthTableCell">
-                            <label>{{ .UnAuthRemoteIPEternity }}</label>
-                        </div>
-                    </div>
-                    {{range .UnAuthOperations }}
-                    <div class="authTableRow">
-                        <div class="authTableCell">{{ .Operation }}</div>
-                        <div class="authTableCell">
-                            <label>{{ .Daily }}</label>
-                        </div>
-                        <div class="authTableCell">
-                            <label>{{ .Monthly }}</label>
-                        </div>
-                        <div class="authTableCell">
-                            <label>{{ .Eternity }}</label>
-                        </div>
-                    </div>
-                    {{end}}
-                </div>
-                <div>
-                    <center><h3>Authenticated Rate Limit</h3></center>
-                </div>
                 <div class="authTable">
-                    <div class="unauthTableHeading">
+                    <div class="authTableHeading">
                         <div class="authTableHead">Target</div>
                         <div class="authTableHead">Daily</div>
                         <div class="authTableHead">Monthly</div>
                         <div class="authTableHead">Eternity</div>
                     </div>
                     <div class="authTableRow">
-                        <div class="unauthTableCell">Global</div>
-                        <div class="unauthTableCell">
+                        <div class="authTableCell">Global</div>
+                        <div class="authTableCell">
                             <label>{{ .AuthGlobalDaily }}</label>
                         </div>
-                        <div class="unauthTableCell">
+                        <div class="authTableCell">
                             <label>{{ .AuthGlobalMonthly }}</label>
                         </div>
-                        <div class="unauthTableCell">
+                        <div class="authTableCell">
                             <label>{{ .AuthGlobalEternity }}</label>
                         </div>
                     </div>

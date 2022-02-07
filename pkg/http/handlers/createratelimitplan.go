@@ -60,42 +60,6 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 	}
 
 	// Fill plan
-	err = setPlanValue(r.FormValue("rl-unauth-global-daily"), plan.SetUnAuthGlobalDaily)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = setPlanValue(r.FormValue("rl-unauth-global-monthly"), plan.SetUnAuthGlobalMonthly)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = setPlanValue(r.FormValue("rl-unauth-global-eternity"), plan.SetUnAuthGlobalEternity)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-daily"), plan.SetUnAuthRemoteIPDaily)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-monthly"), plan.SetUnAuthRemoteIPMonthly)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-eternity"), plan.SetUnAuthRemoteIPEternity)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	openapiLoader := openapi3.NewLoader()
 	doc, err := openapiLoader.LoadFromData([]byte(apiObj.Spec.OAS))
 	if err != nil {
@@ -107,38 +71,6 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	for _, pathItem := range doc.Paths {
-		for _, operation := range pathItem.Operations() {
-			err := setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-unauth-%s-daily", operation.OperationID)),
-				operation.OperationID,
-				plan.SetUnAuthOperationDaily,
-			)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			err = setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-unauth-%s-monthly", operation.OperationID)),
-				operation.OperationID,
-				plan.SetUnAuthOperationMonthly,
-			)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			err = setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-unauth-%s-eternity", operation.OperationID)),
-				operation.OperationID,
-				plan.SetUnAuthOperationEternity,
-			)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-		}
 	}
 
 	err = setPlanValue(r.FormValue("rl-auth-global-daily"), plan.SetAuthGlobalDaily)

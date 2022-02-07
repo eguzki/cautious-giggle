@@ -78,10 +78,7 @@
                     <div class="apiTableCell">{{ .Spec.Description }}</div>
                     <div class="apiTableCell">{{if not .Spec.Gateway }}None{{else}}{{ .Spec.Gateway }}{{end}}</div>
                     <div class="apiTableCell">
-                        <form action="/export" method="GET">
-                            <input type="hidden" name="api" value="{{ .Name }}" />
-                            <button type="submit">Export Manifests</button>
-                        </form>
+                        <label>kubectl apply -f http://127.0.0.1:8082/export?api={{ .Name }}</label>
                     </div>
                 </div>
                 {{end}}

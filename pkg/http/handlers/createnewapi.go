@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"reflect"
 
@@ -12,6 +13,7 @@ import (
 
 	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/pkg/utils"
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 type CreateNewAPIHandler struct {
@@ -98,6 +100,88 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 			OAS:           oasContent,
 			PathMatchType: matchType,
 		},
+	}
+
+	// Fill plan
+	err = setPlanValue(r.FormValue("rl-unauth-global-daily"), desiredAPIObj.Spec.SetUnAuthGlobalDaily)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-global-monthly"), desiredAPIObj.Spec.SetUnAuthGlobalMonthly)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-global-eternity"), desiredAPIObj.Spec.SetUnAuthGlobalEternity)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-daily"), desiredAPIObj.Spec.SetUnAuthRemoteIPDaily)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-monthly"), desiredAPIObj.Spec.SetUnAuthRemoteIPMonthly)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-eternity"), desiredAPIObj.Spec.SetUnAuthRemoteIPEternity)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	openapiLoader := openapi3.NewLoader()
+	doc, err := openapiLoader.LoadFromData([]byte(desiredAPIObj.Spec.OAS))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = doc.Validate(openapiLoader.Context)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, pathItem := range doc.Paths {
+		for _, operation := range pathItem.Operations() {
+			err := setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-daily", operation.OperationID)),
+				operation.OperationID,
+				desiredAPIObj.Spec.SetUnAuthOperationDaily,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-monthly", operation.OperationID)),
+				operation.OperationID,
+				desiredAPIObj.Spec.SetUnAuthOperationMonthly,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = setPlanOperationValue(
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-eternity", operation.OperationID)),
+				operation.OperationID,
+				desiredAPIObj.Spec.SetUnAuthOperationEternity,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
 	apiKey := client.ObjectKey{Name: desiredAPIObj.Name, Namespace: desiredAPIObj.Namespace}

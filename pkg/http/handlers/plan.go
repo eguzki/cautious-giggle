@@ -22,21 +22,14 @@ type PlanOperation struct {
 }
 
 type PlanData struct {
-	APIName                string
-	APIDomain              string
-	Name                   string
-	Description            string
-	UnAuthGlobalDaily      string
-	UnAuthGlobalMonthly    string
-	UnAuthGlobalEternity   string
-	UnAuthRemoteIPDaily    string
-	UnAuthRemoteIPMonthly  string
-	UnAuthRemoteIPEternity string
-	UnAuthOperations       []*PlanOperation
-	AuthGlobalDaily        string
-	AuthGlobalMonthly      string
-	AuthGlobalEternity     string
-	AuthOperations         []*PlanOperation
+	APIName            string
+	APIDomain          string
+	Name               string
+	Description        string
+	AuthGlobalDaily    string
+	AuthGlobalMonthly  string
+	AuthGlobalEternity string
+	AuthOperations     []*PlanOperation
 }
 
 type PlanHandler struct {
@@ -89,32 +82,18 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := &PlanData{
-		APIName:                apiName,
-		APIDomain:              apiObj.Spec.PublicDomain,
-		Name:                   planName,
-		Description:            plan.Description,
-		UnAuthGlobalDaily:      "---",
-		UnAuthGlobalMonthly:    "---",
-		UnAuthGlobalEternity:   "---",
-		UnAuthRemoteIPDaily:    "---",
-		UnAuthRemoteIPMonthly:  "---",
-		UnAuthRemoteIPEternity: "---",
-		AuthGlobalDaily:        "---",
-		AuthGlobalMonthly:      "---",
-		AuthGlobalEternity:     "---",
+		APIName:            apiName,
+		APIDomain:          apiObj.Spec.PublicDomain,
+		Name:               planName,
+		Description:        plan.Description,
+		AuthGlobalDaily:    "---",
+		AuthGlobalMonthly:  "---",
+		AuthGlobalEternity: "---",
 	}
 
 	// Initialize
 	for path, pathItem := range doc.Paths {
 		for opVerb, operation := range pathItem.Operations() {
-			data.UnAuthOperations = append(data.UnAuthOperations, &PlanOperation{
-				Operation:   fmt.Sprintf("%s %s", opVerb, path),
-				OperationID: operation.OperationID,
-				Daily:       "---",
-				Monthly:     "---",
-				Eternity:    "---",
-			})
-
 			if operationIsSecured(doc, operation) {
 				data.AuthOperations = append(data.AuthOperations, &PlanOperation{
 					Operation:   fmt.Sprintf("%s %s", opVerb, path),
@@ -127,55 +106,17 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if plan.GetUnAuth().GetGlobal().Daily != nil {
-		data.UnAuthGlobalDaily = fmt.Sprint(*plan.GetUnAuth().GetGlobal().Daily)
+	if plan.GetGlobal().Daily != nil {
+		data.AuthGlobalDaily = fmt.Sprint(*plan.GetGlobal().Daily)
 	}
-	if plan.GetUnAuth().GetGlobal().Monthly != nil {
-		data.UnAuthGlobalMonthly = fmt.Sprint(*plan.GetUnAuth().GetGlobal().Monthly)
+	if plan.GetGlobal().Monthly != nil {
+		data.AuthGlobalMonthly = fmt.Sprint(*plan.GetGlobal().Monthly)
 	}
-	if plan.GetUnAuth().GetGlobal().Eternity != nil {
-		data.UnAuthGlobalEternity = fmt.Sprint(*plan.GetUnAuth().GetGlobal().Eternity)
-	}
-
-	if plan.GetUnAuth().GetRemoteIP().Daily != nil {
-		data.UnAuthRemoteIPDaily = fmt.Sprint(*plan.GetUnAuth().GetRemoteIP().Daily)
-	}
-	if plan.GetUnAuth().GetRemoteIP().Monthly != nil {
-		data.UnAuthRemoteIPMonthly = fmt.Sprint(*plan.GetUnAuth().GetRemoteIP().Monthly)
-	}
-	if plan.GetUnAuth().GetRemoteIP().Eternity != nil {
-		data.UnAuthRemoteIPEternity = fmt.Sprint(*plan.GetUnAuth().GetRemoteIP().Eternity)
+	if plan.GetGlobal().Eternity != nil {
+		data.AuthGlobalEternity = fmt.Sprint(*plan.GetGlobal().Eternity)
 	}
 
-	if plan.GetAuth().GetGlobal().Daily != nil {
-		data.AuthGlobalDaily = fmt.Sprint(*plan.GetAuth().GetGlobal().Daily)
-	}
-	if plan.GetAuth().GetGlobal().Monthly != nil {
-		data.AuthGlobalMonthly = fmt.Sprint(*plan.GetAuth().GetGlobal().Monthly)
-	}
-	if plan.GetAuth().GetGlobal().Eternity != nil {
-		data.AuthGlobalEternity = fmt.Sprint(*plan.GetAuth().GetGlobal().Eternity)
-	}
-
-	for operationID, operationPlan := range plan.GetUnAuth().Operations {
-		for idx, po := range data.UnAuthOperations {
-			if data.UnAuthOperations[idx].OperationID == operationID {
-				if operationPlan != nil && operationPlan.Daily != nil {
-					po.Daily = fmt.Sprint(*operationPlan.Daily)
-				}
-
-				if operationPlan != nil && operationPlan.Monthly != nil {
-					po.Monthly = fmt.Sprint(*operationPlan.Monthly)
-				}
-
-				if operationPlan != nil && operationPlan.Eternity != nil {
-					po.Eternity = fmt.Sprint(*operationPlan.Eternity)
-				}
-			}
-		}
-	}
-
-	for operationID, operationPlan := range plan.GetAuth().Operations {
+	for operationID, operationPlan := range plan.Operations {
 		for idx, po := range data.AuthOperations {
 			if data.AuthOperations[idx].OperationID == operationID {
 				if operationPlan != nil && operationPlan.Daily != nil {

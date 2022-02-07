@@ -47,77 +47,33 @@ spec:
               plans:
                 additionalProperties:
                   properties:
-                    auth:
-                      properties:
-                        global:
-                          properties:
-                            daily:
-                              format: int32
-                              type: integer
-                            eternity:
-                              format: int32
-                              type: integer
-                            monthly:
-                              format: int32
-                              type: integer
-                          type: object
-                        operations:
-                          additionalProperties:
-                            properties:
-                              daily:
-                                format: int32
-                                type: integer
-                              eternity:
-                                format: int32
-                                type: integer
-                              monthly:
-                                format: int32
-                                type: integer
-                            type: object
-                          type: object
-                      type: object
                     description:
                       type: string
-                    unauth:
+                    global:
                       properties:
-                        global:
-                          properties:
-                            daily:
-                              format: int32
-                              type: integer
-                            eternity:
-                              format: int32
-                              type: integer
-                            monthly:
-                              format: int32
-                              type: integer
-                          type: object
-                        operations:
-                          additionalProperties:
-                            properties:
-                              daily:
-                                format: int32
-                                type: integer
-                              eternity:
-                                format: int32
-                                type: integer
-                              monthly:
-                                format: int32
-                                type: integer
-                            type: object
-                          type: object
-                        remoteIP:
-                          properties:
-                            daily:
-                              format: int32
-                              type: integer
-                            eternity:
-                              format: int32
-                              type: integer
-                            monthly:
-                              format: int32
-                              type: integer
-                          type: object
+                        daily:
+                          format: int32
+                          type: integer
+                        eternity:
+                          format: int32
+                          type: integer
+                        monthly:
+                          format: int32
+                          type: integer
+                      type: object
+                    operations:
+                      additionalProperties:
+                        properties:
+                          daily:
+                            format: int32
+                            type: integer
+                          eternity:
+                            format: int32
+                            type: integer
+                          monthly:
+                            format: int32
+                            type: integer
+                        type: object
                       type: object
                   required:
                   - description
@@ -127,6 +83,47 @@ spec:
                 type: string
               servicename:
                 type: string
+              unauthratelimit:
+                properties:
+                  global:
+                    properties:
+                      daily:
+                        format: int32
+                        type: integer
+                      eternity:
+                        format: int32
+                        type: integer
+                      monthly:
+                        format: int32
+                        type: integer
+                    type: object
+                  operations:
+                    additionalProperties:
+                      properties:
+                        daily:
+                          format: int32
+                          type: integer
+                        eternity:
+                          format: int32
+                          type: integer
+                        monthly:
+                          format: int32
+                          type: integer
+                      type: object
+                    type: object
+                  remoteIP:
+                    properties:
+                      daily:
+                        format: int32
+                        type: integer
+                      eternity:
+                        format: int32
+                        type: integer
+                      monthly:
+                        format: int32
+                        type: integer
+                    type: object
+                type: object
             required:
             - description
             - oas

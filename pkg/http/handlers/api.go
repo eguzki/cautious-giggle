@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -23,15 +24,22 @@ type Plan struct {
 }
 
 type APIData struct {
-	Name          string
-	ServiceName   string
-	Description   string
-	PublicDomain  string
-	PathMatchType string
-	Gateway       string
-	Operations    []Operation
-	Plans         []Plan
-	Gateways      []Gateway
+	Name                   string
+	ServiceName            string
+	Description            string
+	PublicDomain           string
+	PathMatchType          string
+	Gateway                string
+	Operations             []Operation
+	Plans                  []Plan
+	Gateways               []Gateway
+	RateLimitOperations    []*PlanOperation
+	UnAuthGlobalDaily      string
+	UnAuthGlobalMonthly    string
+	UnAuthGlobalEternity   string
+	UnAuthRemoteIPDaily    string
+	UnAuthRemoteIPMonthly  string
+	UnAuthRemoteIPEternity string
 }
 
 var _ http.Handler = &APIHandler{}
@@ -53,11 +61,17 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	aPIData := APIData{
-		Name:          apiName,
-		ServiceName:   apiObj.Spec.ServiceName,
-		Description:   apiObj.Spec.Description,
-		PublicDomain:  apiObj.Spec.PublicDomain,
-		PathMatchType: apiObj.Spec.PathMatchType,
+		Name:                   apiName,
+		ServiceName:            apiObj.Spec.ServiceName,
+		Description:            apiObj.Spec.Description,
+		PublicDomain:           apiObj.Spec.PublicDomain,
+		PathMatchType:          apiObj.Spec.PathMatchType,
+		UnAuthGlobalDaily:      "0",
+		UnAuthGlobalMonthly:    "0",
+		UnAuthGlobalEternity:   "0",
+		UnAuthRemoteIPDaily:    "0",
+		UnAuthRemoteIPMonthly:  "0",
+		UnAuthRemoteIPEternity: "0",
 	}
 
 	if apiObj.Spec.Gateway != nil {
@@ -66,6 +80,26 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	for planName := range apiObj.Spec.Plans {
 		aPIData.Plans = append(aPIData.Plans, Plan{ID: planName})
+	}
+
+	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Daily != nil {
+		aPIData.UnAuthGlobalDaily = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Daily)
+	}
+	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Monthly != nil {
+		aPIData.UnAuthGlobalMonthly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Monthly)
+	}
+	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Eternity != nil {
+		aPIData.UnAuthGlobalEternity = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Eternity)
+	}
+
+	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Daily != nil {
+		aPIData.UnAuthRemoteIPDaily = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Daily)
+	}
+	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Monthly != nil {
+		aPIData.UnAuthRemoteIPMonthly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Monthly)
+	}
+	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Eternity != nil {
+		aPIData.UnAuthRemoteIPEternity = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Eternity)
 	}
 
 	openapiLoader := openapi3.NewLoader()
@@ -103,10 +137,37 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 
 			aPIData.Operations = append(aPIData.Operations, Operation{
-				Method:   opVerb,
-				Path:     path,
-				Security: security,
+				Method:      opVerb,
+				Path:        path,
+				Security:    security,
+				OperationID: operation.OperationID,
+				Target:      fmt.Sprintf("%s %s", opVerb, path),
 			})
+			aPIData.RateLimitOperations = append(aPIData.RateLimitOperations, &PlanOperation{
+				Operation:   fmt.Sprintf("%s %s", opVerb, path),
+				OperationID: operation.OperationID,
+				Daily:       "0",
+				Monthly:     "0",
+				Eternity:    "0",
+			})
+		}
+	}
+
+	for operationID, rlConf := range apiObj.Spec.GetUnAuthRateLimit().Operations {
+		for idx, po := range aPIData.RateLimitOperations {
+			if aPIData.RateLimitOperations[idx].OperationID == operationID {
+				if rlConf != nil && rlConf.Daily != nil {
+					po.Daily = fmt.Sprint(*rlConf.Daily)
+				}
+
+				if rlConf != nil && rlConf.Monthly != nil {
+					po.Monthly = fmt.Sprint(*rlConf.Monthly)
+				}
+
+				if rlConf != nil && rlConf.Eternity != nil {
+					po.Eternity = fmt.Sprint(*rlConf.Eternity)
+				}
+			}
 		}
 	}
 

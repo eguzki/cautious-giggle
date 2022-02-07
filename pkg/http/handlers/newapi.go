@@ -15,9 +15,11 @@ import (
 )
 
 type Operation struct {
-	Method   string
-	Path     string
-	Security string
+	Method      string
+	Path        string
+	Security    string
+	OperationID string
+	Target      string
 }
 
 type NewAPIData struct {

@@ -73,6 +73,9 @@
           font-family: Calibri, Helvetica, sans-serif;
           background-color: lightblue;
         }
+        button {
+          float: right;
+        }
         </style>
     </head>
     <body>
@@ -104,6 +107,63 @@
                     <div class="apiTableCell">{{ .Security }}</div>
                 </div>
                 {{end}}
+            </div>
+            <div>
+                <center><h3>Unauthenticated Rate Limit</h3></center>
+            </div>
+            <div>
+                <form action="/updateunauthratelimit" method="post">
+                    <input type="hidden" name="api" value="{{ .Name }}" />
+                    <div>
+                        <button type="submit">Update Unauthenticated Rate Limit</button>
+                    </div>
+                    <div class="apiTable">
+                        <div class="apiTableHeading">
+                            <div class="apiTableHead">Target</div>
+                            <div class="apiTableHead">Daily</div>
+                            <div class="apiTableHead">Monthly</div>
+                            <div class="apiTableHead">Eternity</div>
+                        </div>
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">Global</div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthGlobalDaily }}" name="rl-unauth-global-daily">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthGlobalMonthly }}" name="rl-unauth-global-monthly">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthGlobalEternity }}" name="rl-unauth-global-eternity">
+                            </div>
+                        </div>
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">Remote IP</div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthRemoteIPDaily }}" name="rl-unauth-remoteIP-daily">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthRemoteIPMonthly }}" name="rl-unauth-remoteIP-monthly">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .UnAuthRemoteIPEternity }}" name="rl-unauth-remoteIP-eternity">
+                            </div>
+                        </div>
+                        {{range .RateLimitOperations }}
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">{{ .Operation }}</div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .Daily }}" name="rl-unauth-{{ .OperationID }}-daily">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .Monthly }}" name="rl-unauth-{{ .OperationID }}-monthly">
+                            </div>
+                            <div class="apiTableCell">
+                                <input type="text" value="{{ .Eternity }}" name="rl-unauth-{{ .OperationID }}-eternity">
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </form>
             </div>
             <div class="plans">
                 <div>
