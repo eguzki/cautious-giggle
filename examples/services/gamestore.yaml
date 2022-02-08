@@ -1,4 +1,30 @@
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gamestore
+  labels:
+    app: gamestore
+spec:
+  selector:
+    matchLabels:
+      app: gamestore
+  template:
+    metadata:
+      labels:
+        app: gamestore
+    spec:
+      containers:
+        - name: gamestore
+          image: quay.io/3scale/authorino:echo-api
+          env:
+            - name: PORT
+              value: "3000"
+          ports:
+            - containerPort: 3000
+              name: http
+  replicas: 1
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,7 +33,7 @@ metadata:
     discovery.kuadrant.io/enabled: "true"
 spec:
   selector:
-    svc: games
+    app: gamestore
   ports:
     - port: 80
       protocol: TCP

@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	istionetworkingapi "istio.io/api/networking/v1beta1"
+	istionetworking "istio.io/client-go/pkg/apis/networking/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -83,7 +85,7 @@ func (a *CreateGatewaysHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		},
 	}
 
-	if err := a.K8sClient.Create(context.Background(), gwDeployment); err != nil {
+	if err := a.K8sClient.Create(context.Background(), gwDeployment); utils.IgnoreAlreadyExists(err) != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -107,7 +109,37 @@ func (a *CreateGatewaysHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		},
 	}
 
-	if err := a.K8sClient.Create(context.Background(), gwService); err != nil {
+	if err := a.K8sClient.Create(context.Background(), gwService); utils.IgnoreAlreadyExists(err) != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	gateway := &istionetworking.Gateway{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "networking.istio.io/v1beta1",
+			Kind:       "Gateway",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      gwName,
+			Namespace: "default",
+			Labels:    map[string]string{utils.KuadrantGatewayLabel: "true"},
+		},
+		Spec: istionetworkingapi.Gateway{
+			Selector: map[string]string{labelKey1: labelValue1},
+			Servers: []*istionetworkingapi.Server{
+				&istionetworkingapi.Server{
+					Hosts: []string{"*"},
+					Port: &istionetworkingapi.Port{
+						Number:   80,
+						Name:     "http",
+						Protocol: "HTTP",
+					},
+				},
+			},
+		},
+	}
+
+	if err := a.K8sClient.Create(context.Background(), gateway); utils.IgnoreAlreadyExists(err) != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
