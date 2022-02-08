@@ -12,6 +12,7 @@ import (
 
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/pkg/istiogenerators"
+	"github.com/eguzki/cautious-giggle/pkg/kuadrantgenerators"
 )
 
 type ExportAPIHandler struct {
@@ -68,13 +69,19 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vs, err := istiogenerators.VirtualService(doc, apiObj.Spec.ServiceName,
-		"default", 80, []string{*apiObj.Spec.Gateway}, apiObj.Spec.PublicDomain)
+		"default", 80, []string{*apiObj.Spec.Gateway}, apiObj.Spec.PublicDomain, apiObj.Spec.PathMatchType)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	authzPolicy, err := istiogenerators.AuthorizationPolicy(doc, gatewayLabels, apiObj.Spec.PublicDomain)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	authConfig, err := kuadrantgenerators.AuthConfig(doc, apiObj.Spec.PublicDomain)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,6 +106,11 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = serializer.Encode(authzPolicy, frameWriter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = serializer.Encode(authConfig, frameWriter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

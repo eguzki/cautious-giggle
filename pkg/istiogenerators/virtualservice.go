@@ -12,7 +12,8 @@ import (
 )
 
 func VirtualService(doc *openapi3.T, serviceName, serviceNamespace string,
-	servicePort uint32, gateways []string, publicHost string) (*istionetworking.VirtualService, error) {
+	servicePort uint32, gateways []string, publicHost string,
+	pathMatchType string) (*istionetworking.VirtualService, error) {
 
 	objectName, err := utils.K8sNameFromOpenAPITitle(doc)
 	if err != nil {
@@ -36,7 +37,7 @@ func VirtualService(doc *openapi3.T, serviceName, serviceNamespace string,
 		Spec: istionetworkingapi.VirtualService{
 			Gateways: gateways,
 			Hosts:    []string{publicHost},
-			Http:     HTTPRoutesFromOpenAPI(doc, destination),
+			Http:     HTTPRoutesFromOpenAPI(doc, destination, pathMatchType),
 		},
 	}
 

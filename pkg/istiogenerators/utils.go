@@ -8,20 +8,31 @@ import (
 	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
-func HTTPRoutesFromOpenAPI(oasDoc *openapi3.T, destination *istioapi.Destination) []*istioapi.HTTPRoute {
+func HTTPRoutesFromOpenAPI(oasDoc *openapi3.T, destination *istioapi.Destination,
+	pathMatchType string) []*istioapi.HTTPRoute {
 	httpRoutes := []*istioapi.HTTPRoute{}
 
 	// Path based routing
 	for path, pathItem := range oasDoc.Paths {
+
+		var uriMatch *istioapi.StringMatch
+		if pathMatchType == "prefix" {
+			uriMatch = &istioapi.StringMatch{
+				MatchType: &istioapi.StringMatch_Prefix{Prefix: path},
+			}
+		} else {
+			uriMatch = &istioapi.StringMatch{
+				MatchType: &istioapi.StringMatch_Exact{Exact: path},
+			}
+		}
+
 		for opVerb, operation := range pathItem.Operations() {
 			httpRoute := &istioapi.HTTPRoute{
 				// TODO(eastizle): OperationID can be null, fallback to some custom name
 				Name: operation.OperationID,
 				Match: []*istioapi.HTTPMatchRequest{
 					{
-						Uri: &istioapi.StringMatch{
-							MatchType: &istioapi.StringMatch_Exact{Exact: path},
-						},
+						Uri: uriMatch,
 						Method: &istioapi.StringMatch{
 							MatchType: &istioapi.StringMatch_Exact{Exact: opVerb},
 						},
