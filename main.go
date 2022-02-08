@@ -133,6 +133,7 @@ func startHTTPService() {
 	newUserHandler := &handlers.NewUserHandler{K8sClient: k8sClient}
 	createUserHandler := &handlers.CreateUserHandler{K8sClient: k8sClient}
 	userHandler := &handlers.UserHandler{K8sClient: k8sClient}
+	exportAPIHandler := &handlers.ExportAPIHandler{K8sClient: k8sClient}
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.RedirectHandler("/login.html", 301))
@@ -154,6 +155,7 @@ func startHTTPService() {
 	mux.Handle("/newuser", newUserHandler)
 	mux.Handle("/createuser", createUserHandler)
 	mux.Handle("/user", userHandler)
+	mux.Handle("/export", exportAPIHandler)
 
 	loggerRoute := gorillahandlers.LoggingHandler(os.Stdout, mux)
 

@@ -42,6 +42,12 @@
         .apiTableRow{
             display: table-row;
         }
+        .actionGwMissing{
+            color: red
+        }
+        .actionGwFound{
+            color: green
+        }
         #newapiform {
           float: right;
         }
@@ -72,14 +78,12 @@
                     <div class="apiTableHead">Gateway</div>
                     <div class="apiTableHead">Action</div>
                 </div>
-                {{range .}}
+                {{range .APIs }}
                 <div class="apiTableRow">
                     <div class="apiTableCell"><a href="/api?id={{ .Name }}">{{ .Name }}</a></div>
-                    <div class="apiTableCell">{{ .Spec.Description }}</div>
-                    <div class="apiTableCell">{{if not .Spec.Gateway }}None{{else}}{{ .Spec.Gateway }}{{end}}</div>
-                    <div class="apiTableCell">
-                        <label>kubectl apply -f http://127.0.0.1:8082/export?api={{ .Name }}</label>
-                    </div>
+                    <div class="apiTableCell">{{ .Description }}</div>
+                    <div class="apiTableCell">{{ .Gateway }}</div>
+                    <div class="apiTableCell"><div class="{{if .GwLinked }}actionGwFound{{else}}actionGwMissing{{end}}">{{ .Action }}</div></div>
                 </div>
                 {{end}}
             </div>

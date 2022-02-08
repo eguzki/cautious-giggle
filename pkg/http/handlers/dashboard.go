@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -11,6 +12,18 @@ import (
 	giggletemplates "github.com/eguzki/cautious-giggle/pkg/http/templates"
 )
 
+type DashboardAPI struct {
+	Name        string
+	Description string
+	Gateway     string
+	Action      string
+	GwLinked    bool
+}
+
+type DashboardData struct {
+	APIs []*DashboardAPI
+}
+
 type DashboardHandler struct {
 	K8sClient client.Client
 }
@@ -18,20 +31,38 @@ type DashboardHandler struct {
 var _ http.Handler = &DashboardHandler{}
 
 func (a *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	apiList := &gigglev1alpha1.ApiList{}
+	err := a.K8sClient.List(context.Background(), apiList)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := &DashboardData{}
+
+	for idx := range apiList.Items {
+		api := &DashboardAPI{
+			Name:        apiList.Items[idx].Name,
+			Description: apiList.Items[idx].Spec.Description,
+			Gateway:     "None",
+			Action:      `!!! Not linked to any gateway`,
+			GwLinked:    false,
+		}
+		if apiList.Items[idx].Spec.Gateway != nil {
+			api.Gateway = *apiList.Items[idx].Spec.Gateway
+			api.Action = fmt.Sprintf("kubectl apply -f http://127.0.0.1:8082/export?api=%s", apiList.Items[idx].Name)
+			api.GwLinked = true
+		}
+
+		data.APIs = append(data.APIs, api)
+	}
+
 	t, err := template.ParseFS(giggletemplates.TemplatesFS, "dashboard.html.tmpl")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	apiList := &gigglev1alpha1.ApiList{}
-	err = a.K8sClient.List(context.Background(), apiList)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := apiList.Items
 	if err := t.Execute(w, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
