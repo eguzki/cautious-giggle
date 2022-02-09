@@ -252,7 +252,7 @@ cluster-setup: $(KIND) cluster-cleanup
 # kuadrantctl tool
 KUADRANTCTL = $(PROJECT_DIR)/bin/kuadrantctl
 $(KUADRANTCTL):
-	$(call go-get-tool,$(KUADRANTCTL),github.com/kuadrant/kuadrantctl@v0.1.0)
+	$(call go-get-tool,$(KUADRANTCTL),github.com/kuadrant/kuadrantctl@new-kuadrant-api)
 
 .PHONY : kuadrantctl
 kuadrantctl: $(KUADRANTCTL)

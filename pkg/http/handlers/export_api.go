@@ -87,6 +87,12 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rateLimiPolicy, err := kuadrantgenerators.RateLimitPolicy(doc, vs.Name, apiObj)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	serializer := k8sJson.NewSerializerWithOptions(
 		k8sJson.DefaultMetaFactory, nil, nil,
 		k8sJson.SerializerOptions{
@@ -111,6 +117,11 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = serializer.Encode(authConfig, frameWriter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = serializer.Encode(rateLimiPolicy, frameWriter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

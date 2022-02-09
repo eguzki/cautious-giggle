@@ -26,6 +26,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	gorillahandlers "github.com/gorilla/handlers"
+	kuadrantv1alpha1 "github.com/kuadrant/kuadrant-controller/apis/apim/v1alpha1"
 	istionetworking "istio.io/client-go/pkg/apis/networking/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -35,7 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	gigglekuadrantiov1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
+	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/controllers"
 	"github.com/eguzki/cautious-giggle/pkg/http/handlers"
 	"github.com/eguzki/cautious-giggle/pkg/http/html"
@@ -50,9 +51,11 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(gigglekuadrantiov1alpha1.AddToScheme(scheme))
+	utilruntime.Must(gigglev1alpha1.AddToScheme(scheme))
 
 	utilruntime.Must(istionetworking.AddToScheme(scheme))
+
+	utilruntime.Must(kuadrantv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
