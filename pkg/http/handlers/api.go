@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
@@ -29,10 +28,8 @@ type APIData struct {
 	Description            string
 	PublicDomain           string
 	PathMatchType          string
-	Gateway                string
 	Operations             []Operation
 	Plans                  []Plan
-	Gateways               []Gateway
 	RateLimitOperations    []*PlanOperation
 	UnAuthGlobalDaily      string
 	UnAuthGlobalMonthly    string
@@ -72,10 +69,6 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		UnAuthRemoteIPDaily:    "0",
 		UnAuthRemoteIPMonthly:  "0",
 		UnAuthRemoteIPEternity: "0",
-	}
-
-	if apiObj.Spec.Gateway != nil {
-		aPIData.Gateway = *apiObj.Spec.Gateway
 	}
 
 	for planName := range apiObj.Spec.Plans {
@@ -169,17 +162,6 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-	}
-
-	serviceList := &corev1.ServiceList{}
-	err = a.K8sClient.List(context.Background(), serviceList, client.HasLabels{utils.KuadrantGatewayLabel})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for idx := range serviceList.Items {
-		aPIData.Gateways = append(aPIData.Gateways, Gateway{Name: serviceList.Items[idx].Name})
 	}
 
 	t, err := template.ParseFS(giggletemplates.TemplatesFS, "api.html.tmpl")

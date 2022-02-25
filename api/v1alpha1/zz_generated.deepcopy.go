@@ -141,11 +141,6 @@ func (in *ApiSpec) DeepCopyInto(out *ApiSpec) {
 			(*out)[key] = outVal
 		}
 	}
-	if in.Gateway != nil {
-		in, out := &in.Gateway, &out.Gateway
-		*out = new(string)
-		**out = **in
-	}
 	if in.UserPlan != nil {
 		in, out := &in.UserPlan, &out.UserPlan
 		*out = make(map[string]string, len(*in))

@@ -2,11 +2,9 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	corev1 "k8s.io/api/core/v1"
 	k8sJson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -37,22 +35,8 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if apiObj.Spec.Gateway == nil {
-		http.Error(w, "API with empty gateway", http.StatusBadRequest)
-		return
-	}
-
-	gatewayServiceKey := client.ObjectKey{Name: *apiObj.Spec.Gateway, Namespace: "default"}
-	gatewayServiceObj := &corev1.Service{}
-	err = a.K8sClient.Get(context.Background(), gatewayServiceKey, gatewayServiceObj)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	gatewayLabels := []string{}
-	for key, val := range gatewayServiceObj.Spec.Selector {
-		gatewayLabels = append(gatewayLabels, fmt.Sprintf("%s=%s", key, val))
+	gatewayLabels := map[string]string{
+		"istio": "kuadrant-system",
 	}
 
 	openapiLoader := openapi3.NewLoader()
@@ -69,7 +53,7 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vs, err := istiogenerators.VirtualService(doc, apiObj.Spec.ServiceName,
-		"default", 80, []string{*apiObj.Spec.Gateway}, apiObj.Spec.PublicDomain, apiObj.Spec.PathMatchType)
+		"default", 80, []string{"kuadrant-system/kuadrant-gateway"}, apiObj.Spec.PublicDomain, apiObj.Spec.PathMatchType)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

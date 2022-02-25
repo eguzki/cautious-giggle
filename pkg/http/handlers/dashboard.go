@@ -15,7 +15,6 @@ import (
 type DashboardAPI struct {
 	Name        string
 	Description string
-	Gateway     string
 	Action      string
 	GwLinked    bool
 }
@@ -44,16 +43,9 @@ func (a *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		api := &DashboardAPI{
 			Name:        apiList.Items[idx].Name,
 			Description: apiList.Items[idx].Spec.Description,
-			Gateway:     "None",
-			Action:      `!!! Not linked to any gateway`,
+			Action:      fmt.Sprintf("kubectl apply -f http://127.0.0.1:8082/export?api=%s", apiList.Items[idx].Name),
 			GwLinked:    false,
 		}
-		if apiList.Items[idx].Spec.Gateway != nil {
-			api.Gateway = *apiList.Items[idx].Spec.Gateway
-			api.Action = fmt.Sprintf("kubectl apply -f http://127.0.0.1:8082/export?api=%s", apiList.Items[idx].Name)
-			api.GwLinked = true
-		}
-
 		data.APIs = append(data.APIs, api)
 	}
 

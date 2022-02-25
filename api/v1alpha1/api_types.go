@@ -127,8 +127,6 @@ type ApiSpec struct {
 	UnAuthRateLimit *UnAuthRateLimitConf `json:"unauthratelimit,omitempty"`
 	// +optional
 	Plans map[string]*ApiPlan `json:"plans,omitempty"`
-	// +optional
-	Gateway *string `json:"gateway,omitempty"`
 	// UserPlan userID -> planID
 	// +optional
 	UserPlan map[string]string `json:"users,omitempty"`

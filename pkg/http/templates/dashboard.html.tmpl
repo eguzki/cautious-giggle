@@ -63,7 +63,6 @@
                 <center><h1>MY APIs</h1></center>
             </div>
             <div class="nav">
-                <a href="/gateways">My Gateways</a>
                 <a href="/users">My API Consumers</a>
             </div>
             <div class="i9">
@@ -75,14 +74,12 @@
                 <div class="apiTableHeading">
                     <div class="apiTableHead">Name</div>
                     <div class="apiTableHead">Description</div>
-                    <div class="apiTableHead">Gateway</div>
                     <div class="apiTableHead">Action</div>
                 </div>
                 {{range .APIs }}
                 <div class="apiTableRow">
                     <div class="apiTableCell"><a href="/api?id={{ .Name }}">{{ .Name }}</a></div>
                     <div class="apiTableCell">{{ .Description }}</div>
-                    <div class="apiTableCell">{{ .Gateway }}</div>
                     <div class="apiTableCell"><div class="{{if .GwLinked }}actionGwFound{{else}}actionGwMissing{{end}}">{{ .Action }}</div></div>
                 </div>
                 {{end}}

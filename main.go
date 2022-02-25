@@ -128,9 +128,6 @@ func startHTTPService() {
 	newAPIHandler := &handlers.NewApiHandler{K8sClient: k8sClient}
 	createNewAPIHandler := &handlers.CreateNewAPIHandler{K8sClient: k8sClient}
 	aPIHandler := &handlers.APIHandler{K8sClient: k8sClient}
-	gatewaysHandler := &handlers.GatewaysHandler{K8sClient: k8sClient}
-	createGatewaysHandler := &handlers.CreateGatewaysHandler{K8sClient: k8sClient}
-	updateAPIGatewayHandler := &handlers.UpdateAPIGatewayHandler{K8sClient: k8sClient}
 	newRateLimitPlanHandler := &handlers.NewRateLimitPlanHandler{K8sClient: k8sClient}
 	createRateLimitPlanHandler := &handlers.CreateRateLimitPlanHandler{K8sClient: k8sClient}
 	planHandler := &handlers.PlanHandler{K8sClient: k8sClient}
@@ -149,10 +146,6 @@ func startHTTPService() {
 	mux.Handle("/newapi", newAPIHandler)
 	mux.Handle("/createnewapi", createNewAPIHandler)
 	mux.Handle("/api", aPIHandler)
-	mux.Handle("/gateways", gatewaysHandler)
-	mux.Handle("/newgateway.html", http.FileServer(http.FS(html.NewGatewayContent)))
-	mux.Handle("/creategateway", createGatewaysHandler)
-	mux.Handle("/updateapigateway", updateAPIGatewayHandler)
 	mux.Handle("/newratelimitplan", newRateLimitPlanHandler)
 	mux.Handle("/createratelimitplan", createRateLimitPlanHandler)
 	mux.Handle("/plan", planHandler)

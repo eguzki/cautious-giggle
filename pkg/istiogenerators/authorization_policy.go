@@ -1,9 +1,6 @@
 package istiogenerators
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/getkin/kin-openapi/openapi3"
 	istiosecurityapi "istio.io/api/security/v1beta1"
 	istiotypeapi "istio.io/api/type/v1beta1"
@@ -13,21 +10,11 @@ import (
 	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
-func AuthorizationPolicy(doc *openapi3.T, gatewayLabels []string, publicHost string) (*istiosecurity.AuthorizationPolicy, error) {
+func AuthorizationPolicy(doc *openapi3.T, gatewayLabels map[string]string, publicHost string) (*istiosecurity.AuthorizationPolicy, error) {
 
 	objectName, err := utils.K8sNameFromOpenAPITitle(doc)
 	if err != nil {
 		return nil, err
-	}
-
-	matchLabels := map[string]string{}
-	for idx := range gatewayLabels {
-		labels := strings.Split(gatewayLabels[idx], "=")
-		if len(labels) != 2 {
-			return nil, fmt.Errorf("gateway labels have wrong syntax: %s", gatewayLabels[idx])
-		}
-
-		matchLabels[labels[0]] = labels[1]
 	}
 
 	authPolicy := &istiosecurity.AuthorizationPolicy{
@@ -41,7 +28,7 @@ func AuthorizationPolicy(doc *openapi3.T, gatewayLabels []string, publicHost str
 		},
 		Spec: istiosecurityapi.AuthorizationPolicy{
 			Selector: &istiotypeapi.WorkloadSelector{
-				MatchLabels: matchLabels,
+				MatchLabels: gatewayLabels,
 			},
 			Rules:  AuthorizationPolicyRulesFromOpenAPI(doc, publicHost),
 			Action: istiosecurityapi.AuthorizationPolicy_CUSTOM,
