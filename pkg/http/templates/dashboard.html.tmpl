@@ -45,7 +45,7 @@
         .actionGwMissing{
             color: red
         }
-        .actionGwFound{
+        .exportCell{
             color: green
         }
         #newapiform {
@@ -74,13 +74,13 @@
                 <div class="apiTableHeading">
                     <div class="apiTableHead">Name</div>
                     <div class="apiTableHead">Description</div>
-                    <div class="apiTableHead">Action</div>
+                    <div class="apiTableHead">Export</div>
                 </div>
                 {{range .APIs }}
                 <div class="apiTableRow">
                     <div class="apiTableCell"><a href="/api?id={{ .Name }}">{{ .Name }}</a></div>
                     <div class="apiTableCell">{{ .Description }}</div>
-                    <div class="apiTableCell"><div class="{{if .GwLinked }}actionGwFound{{else}}actionGwMissing{{end}}">{{ .Action }}</div></div>
+                    <div class="apiTableCell"><div class="exportCell">{{ .Action }}</div></div>
                 </div>
                 {{end}}
             </div>

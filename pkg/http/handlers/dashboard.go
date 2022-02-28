@@ -16,7 +16,6 @@ type DashboardAPI struct {
 	Name        string
 	Description string
 	Action      string
-	GwLinked    bool
 }
 
 type DashboardData struct {
@@ -44,7 +43,6 @@ func (a *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Name:        apiList.Items[idx].Name,
 			Description: apiList.Items[idx].Spec.Description,
 			Action:      fmt.Sprintf("kubectl apply -f http://127.0.0.1:8082/export?api=%s", apiList.Items[idx].Name),
-			GwLinked:    false,
 		}
 		data.APIs = append(data.APIs, api)
 	}

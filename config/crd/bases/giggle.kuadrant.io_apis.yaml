@@ -38,8 +38,6 @@ spec:
             properties:
               description:
                 type: string
-              gateway:
-                type: string
               oas:
                 type: string
               pathmatchtype:

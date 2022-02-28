@@ -85,7 +85,6 @@
             </div>
             <div class="nav">
                 <a href="/dashboard">My APIs</a>
-                <a href="/gateways">My Gateways</a>
                 <a href="/users">My API Consumers</a>
             </div>
             <div class="i9">
@@ -188,31 +187,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="gateways">
-                <div>
-                    <center><h3>Gateways</h3></center>
-                </div>
-                <form id="updateGwForm" method="post" action="/updateapigateway">
-                    <div class="gwTable">
-                        <div class="gwRow">
-                            <div class="gwCell">
-                                    <input type="hidden" name="api" value="{{ .Name }}" />
-                                    {{range .Gateways }}
-                                    <div>
-                                        <input type="radio" {{if eq $.Gateway .Name}}checked{{end}} id="{{ .Name }}" name="gw" value="{{ .Name }}" required>
-                                        <label for="{{ .Name }}">{{ .Name }}</label>
-                                    </div>
-                                    {{end}}
-                                    <div>
-                                    </div>
-                            </div>
-                            <div class="gwCell">
-                                <button type="submit">Link Gateway</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
     </body>
