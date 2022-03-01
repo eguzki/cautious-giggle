@@ -32,7 +32,7 @@ func AuthConfig(doc *openapi3.T, publicHost string) (*authorinov1beta1.AuthConfi
 			Identity:      identityList,
 			Metadata:      nil,
 			Authorization: nil,
-			Response:      nil,
+			Response:      AuthConfigResponses(),
 			Patterns:      nil,
 			Conditions:    nil,
 		},

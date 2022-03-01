@@ -17,6 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -27,6 +29,10 @@ type RateLimitConf struct {
 	Monthly *int32 `json:"monthly,omitempty"`
 	// +optional
 	Eternity *int32 `json:"eternity,omitempty"`
+}
+
+func (r *RateLimitConf) IsEmpty() bool {
+	return r.Daily == nil && r.Monthly == nil && r.Eternity == nil
 }
 
 type UnAuthRateLimitConf struct {
@@ -115,6 +121,23 @@ func (a *ApiPlan) SetAuthOperationEternity(val int32, operationID string) {
 	a.GetOperation(operationID).Eternity = &val
 }
 
+func (a *ApiPlan) IsEmpty() bool {
+	for _, rateLimitConf := range a.Operations {
+		if !rateLimitConf.IsEmpty() {
+			return false
+		}
+	}
+
+	return a.GetGlobal().IsEmpty()
+}
+
+type UserInfo struct {
+	// +optional
+	Plan *string `json:"plan,omitempty"`
+	// +optional
+	APIKey *string `json:"apiKey,omitempty"`
+}
+
 // ApiSpec defines the desired state of Api
 type ApiSpec struct {
 	Description   string `json:"description"`
@@ -129,7 +152,7 @@ type ApiSpec struct {
 	Plans map[string]*ApiPlan `json:"plans,omitempty"`
 	// UserPlan userID -> planID
 	// +optional
-	UserPlan map[string]string `json:"users,omitempty"`
+	Users map[string]*UserInfo `json:"users,omitempty"`
 }
 
 func (a *ApiSpec) GetUnAuthRateLimit() *UnAuthRateLimitConf {
@@ -173,6 +196,38 @@ func (a *ApiSpec) SetUnAuthOperationDaily(val int32, operationID string) {
 
 func (a *ApiSpec) SetUnAuthOperationMonthly(val int32, operationID string) {
 	a.GetUnAuthRateLimit().GetOperation(operationID).Monthly = &val
+}
+
+func (a *ApiSpec) HasAnyRateLimitOnOperation(operationID string) bool {
+	for _, userInfo := range a.Users {
+		if userInfo.Plan != nil {
+			apiPlan := a.Plans[*userInfo.Plan]
+			if apiPlan == nil {
+				panic(fmt.Sprintf("plan does not exist %s", *userInfo.Plan))
+			}
+
+			if !apiPlan.GetOperation(operationID).IsEmpty() {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+func (a *ApiSpec) HasAnyAuthRateLimit() bool {
+	for _, userInfo := range a.Users {
+		if userInfo.Plan != nil {
+			apiPlan := a.Plans[*userInfo.Plan]
+			if apiPlan == nil {
+				panic(fmt.Sprintf("plan does not exist %s", *userInfo.Plan))
+			}
+
+			if !apiPlan.IsEmpty() {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // ApiStatus defines the observed state of Api

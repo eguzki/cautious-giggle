@@ -14,6 +14,7 @@ import (
 type UserAPIInfo struct {
 	APIName  string
 	PlanName string
+	Key      string
 }
 
 type UserData struct {
@@ -59,13 +60,18 @@ func (a *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	for idx := range apiList.Items {
 		apiInfo := &UserAPIInfo{
-			APIName: apiList.Items[idx].Name,
+			APIName:  apiList.Items[idx].Name,
+			PlanName: "Not assigned",
+			Key:      "Not assigned",
 		}
 
-		if planName, ok := apiList.Items[idx].Spec.UserPlan[userID]; ok {
-			apiInfo.PlanName = planName
-		} else {
-			apiInfo.PlanName = "Not assigned"
+		if userInfo, ok := apiList.Items[idx].Spec.Users[userID]; ok {
+			if userInfo.Plan != nil {
+				apiInfo.PlanName = *userInfo.Plan
+			}
+			if userInfo.APIKey != nil {
+				apiInfo.Key = *userInfo.APIKey
+			}
 		}
 
 		data.APIs = append(data.APIs, apiInfo)

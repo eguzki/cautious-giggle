@@ -12,7 +12,7 @@ import (
 )
 
 func VirtualService(doc *openapi3.T, serviceName, serviceNamespace string,
-	servicePort uint32, gateways []string, publicHost string,
+	servicePort uint32, gateways []string, rlpName, publicHost string,
 	pathMatchType string) (*istionetworking.VirtualService, error) {
 
 	objectName, err := utils.K8sNameFromOpenAPITitle(doc)
@@ -33,6 +33,9 @@ func VirtualService(doc *openapi3.T, serviceName, serviceNamespace string,
 		ObjectMeta: metav1.ObjectMeta{
 			// Missing namespace
 			Name: objectName,
+			Annotations: map[string]string{
+				"kuadrant.io/ratelimitpolicy": rlpName,
+			},
 		},
 		Spec: istionetworkingapi.VirtualService{
 			Gateways: gateways,

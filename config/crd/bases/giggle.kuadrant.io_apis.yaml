@@ -124,7 +124,12 @@ spec:
                 type: object
               users:
                 additionalProperties:
-                  type: string
+                  properties:
+                    apiKey:
+                      type: string
+                    plan:
+                      type: string
+                  type: object
                 description: UserPlan userID -> planID
                 type: object
             required:

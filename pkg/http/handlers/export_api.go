@@ -11,6 +11,7 @@ import (
 	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/eguzki/cautious-giggle/pkg/istiogenerators"
 	"github.com/eguzki/cautious-giggle/pkg/kuadrantgenerators"
+	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
 
 type ExportAPIHandler struct {
@@ -52,8 +53,15 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rateLimiPolicy, err := kuadrantgenerators.RateLimitPolicy(doc, apiObj)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	vs, err := istiogenerators.VirtualService(doc, apiObj.Spec.ServiceName,
-		"default", 80, []string{"kuadrant-system/kuadrant-gateway"}, apiObj.Spec.PublicDomain, apiObj.Spec.PathMatchType)
+		"default", 80, []string{"kuadrant-system/kuadrant-gateway"}, rateLimiPolicy.Name,
+		apiObj.Spec.PublicDomain, apiObj.Spec.PathMatchType)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -71,11 +79,12 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rateLimiPolicy, err := kuadrantgenerators.RateLimitPolicy(doc, vs.Name, apiObj)
+	workloadName, err := utils.K8sNameFromOpenAPITitle(doc)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	apiKeySecrets := kuadrantgenerators.APIKeySecrets(workloadName, apiObj)
 
 	serializer := k8sJson.NewSerializerWithOptions(
 		k8sJson.DefaultMetaFactory, nil, nil,
@@ -90,6 +99,20 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	frameWriter := k8sJson.YAMLFramer.NewFrameWriter(w)
 
+	err = serializer.Encode(rateLimiPolicy, frameWriter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for idx := range apiKeySecrets {
+		err = serializer.Encode(apiKeySecrets[idx], frameWriter)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	err = serializer.Encode(vs, frameWriter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -101,11 +124,6 @@ func (a *ExportAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = serializer.Encode(authConfig, frameWriter)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = serializer.Encode(rateLimiPolicy, frameWriter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -84,15 +84,35 @@
                     </div>
                 </div>
                 <div>
+                    <div>
+                        <center><h3>Rate Limit Plans</h3></center>
+                    </div>
                     <div class="apiTable">
                         <div class="apiTableHeading">
                             <div class="apiTableHead">API</div>
-                            <div class="apiTableHead">Plan</div>
+                            <div class="apiTableHead">Rate Limit Plan</div>
                         </div>
                         {{range .APIs }}
                         <div class="apiTableRow">
                             <div class="apiTableCell">{{ .APIName }}</div>
                             <div class="apiTableCell">{{ .PlanName }}</div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <center><h3>API Keys</h3></center>
+                    </div>
+                    <div class="apiTable">
+                        <div class="apiTableHeading">
+                            <div class="apiTableHead">API</div>
+                            <div class="apiTableHead">Key</div>
+                        </div>
+                        {{range .APIs }}
+                        <div class="apiTableRow">
+                            <div class="apiTableCell">{{ .APIName }}</div>
+                            <div class="apiTableCell">{{ .Key }}</div>
                         </div>
                         {{end}}
                     </div>

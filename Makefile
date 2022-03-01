@@ -252,7 +252,7 @@ cluster-setup: $(KIND) cluster-cleanup
 # kuadrantctl tool
 KUADRANTCTL = $(PROJECT_DIR)/bin/kuadrantctl
 $(KUADRANTCTL):
-	$(call go-get-tool,$(KUADRANTCTL),github.com/kuadrant/kuadrantctl@new-kuadrant-api)
+	$(call go-get-tool,$(KUADRANTCTL),github.com/kuadrant/kuadrantctl@latest-refs-on-main)
 
 .PHONY : kuadrantctl
 kuadrantctl: $(KUADRANTCTL)
@@ -260,4 +260,3 @@ kuadrantctl: $(KUADRANTCTL)
 .PHONY : kuadrant-setup
 kuadrant-setup: $(KUADRANTCTL) cluster-setup
 	$(KUADRANTCTL) install
-	kubectl apply -f $(PROJECT_DIR)/utils/istio/gateway_rbac.yaml

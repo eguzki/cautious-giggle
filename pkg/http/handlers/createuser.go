@@ -73,23 +73,37 @@ func (a *CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for apiIdx := range apiList.Items {
-		planSelected := r.FormValue(fmt.Sprintf("%splan", apiList.Items[apiIdx].Name))
-		if planSelected == "" || planSelected == "-" {
-			continue
+		if apiList.Items[apiIdx].Spec.Users == nil {
+			apiList.Items[apiIdx].Spec.Users = map[string]*gigglekuadrantiov1alpha1.UserInfo{}
+		}
+		if _, ok := apiList.Items[apiIdx].Spec.Users[userID]; !ok {
+			apiList.Items[apiIdx].Spec.Users[userID] = &gigglekuadrantiov1alpha1.UserInfo{}
 		}
 
-		for planID := range apiList.Items[apiIdx].Spec.Plans {
-			if planSelected == planID {
-				if apiList.Items[apiIdx].Spec.UserPlan == nil {
-					apiList.Items[apiIdx].Spec.UserPlan = map[string]string{}
-				}
-				apiList.Items[apiIdx].Spec.UserPlan[userID] = planID
+		planSelected := r.FormValue(fmt.Sprintf("%splan", apiList.Items[apiIdx].Name))
 
-				err = a.K8sClient.Update(context.Background(), &apiList.Items[apiIdx])
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
+		updated := false
+
+		// Update plan
+		for planID := range apiList.Items[apiIdx].Spec.Plans {
+			if planSelected != "" && planSelected != "-" && planSelected == planID {
+				apiList.Items[apiIdx].Spec.Users[userID].Plan = &planSelected
+				updated = true
+			}
+
+		}
+
+		// Update api key
+		if apiKey := r.FormValue(fmt.Sprintf("%sapikey", apiList.Items[apiIdx].Name)); apiKey != "" {
+			apiList.Items[apiIdx].Spec.Users[userID].APIKey = &apiKey
+			updated = true
+		}
+
+		if updated {
+			err = a.K8sClient.Update(context.Background(), &apiList.Items[apiIdx])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
 		}
 	}

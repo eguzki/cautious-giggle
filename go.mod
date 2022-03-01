@@ -6,7 +6,7 @@ require (
 	github.com/getkin/kin-openapi v0.88.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/kuadrant/authorino v0.7.0
-	github.com/kuadrant/kuadrant-controller v0.2.2-0.20220208165311-a3d87ed442e0
+	github.com/kuadrant/kuadrant-controller v0.2.2-0.20220301123701-b188385223e0
 	github.com/kuadrant/limitador-operator v0.2.0
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.15.0

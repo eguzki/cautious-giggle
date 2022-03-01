@@ -2,6 +2,7 @@ package istiogenerators
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
+	kuadrantv1alpha1 "github.com/kuadrant/kuadrant-controller/apis/apim/v1alpha1"
 	istiosecurityapi "istio.io/api/security/v1beta1"
 	istiotypeapi "istio.io/api/type/v1beta1"
 	istiosecurity "istio.io/client-go/pkg/apis/security/v1beta1"
@@ -41,4 +42,24 @@ func AuthorizationPolicy(doc *openapi3.T, gatewayLabels map[string]string, publi
 	}
 
 	return authPolicy, nil
+}
+
+func PathMethodRateLimit(stage kuadrantv1alpha1.RateLimitStage) *kuadrantv1alpha1.RateLimit {
+	return &kuadrantv1alpha1.RateLimit{
+		Stage: stage,
+		Actions: []*kuadrantv1alpha1.ActionSpecifier{
+			&kuadrantv1alpha1.ActionSpecifier{
+				RequestHeaders: &kuadrantv1alpha1.RequestHeadersSpec{
+					DescriptorKey: "method",
+					HeaderName:    ":method",
+				},
+			},
+			&kuadrantv1alpha1.ActionSpecifier{
+				RequestHeaders: &kuadrantv1alpha1.RequestHeadersSpec{
+					DescriptorKey: "path",
+					HeaderName:    ":path",
+				},
+			},
+		},
+	}
 }

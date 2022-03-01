@@ -92,15 +92,18 @@
                         <button type="submit">Create API Consumer</button>
                     </div>
                     <div>
+                        <div>
+                            <center><h3>Rate Limit Plans</h3></center>
+                        </div>
                         <div class="apiTable">
                             <div class="apiTableHeading">
                                 <div class="apiTableHead">API</div>
-                                <div class="apiTableHead">Plan</div>
+                                <div class="apiTableHead">Rate Limit Plan</div>
                             </div>
                             {{range .APIs }}
                             {{ $api := .APIName }}
                             <div class="apiTableRow">
-                                <div class="apiTableCell">API: {{ .APIName }}</div>
+                                <div class="apiTableCell">{{ .APIName }}</div>
                                 <div class="apiTableCell">
                                     <select name="{{ .APIName }}plan" id="{{ .APIName }}plan">
                                         <option value="-">-</option>
@@ -108,6 +111,26 @@
                                         <option value="{{ .Name }}">{{ .Name }}</option>
                                         {{end}}
                                     </select>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <center><h3>API Keys</h3></center>
+                        </div>
+                        <div class="apiTable">
+                            <div class="apiTableHeading">
+                                <div class="apiTableHead">API</div>
+                                <div class="apiTableHead">Key</div>
+                            </div>
+                            {{range .APIs }}
+                            {{ $api := .APIName }}
+                            <div class="apiTableRow">
+                                <div class="apiTableCell">{{ .APIName }}</div>
+                                <div class="apiTableCell">
+                                    <input type="text" placeholder="Enter key" name="{{ .APIName }}apikey">
                                 </div>
                             </div>
                             {{end}}

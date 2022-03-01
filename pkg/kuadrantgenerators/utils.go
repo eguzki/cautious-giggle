@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	gigglev1alpha1 "github.com/eguzki/cautious-giggle/api/v1alpha1"
 	"github.com/getkin/kin-openapi/openapi3"
 	authorinov1beta1 "github.com/kuadrant/authorino/api/v1beta1"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/eguzki/cautious-giggle/pkg/utils"
 )
@@ -130,5 +133,80 @@ func AuthConfigIdentityFromApiKeyScheme(identity *authorinov1beta1.Identity, sec
 func AuthConfigIdentityFromOIDCScheme(identity *authorinov1beta1.Identity, secScheme *openapi3.SecurityScheme) {
 	identity.Oidc = &authorinov1beta1.Identity_OidcConfig{
 		Endpoint: secScheme.OpenIdConnectUrl,
+	}
+}
+
+func AuthConfigResponses() []*authorinov1beta1.Response {
+	return []*authorinov1beta1.Response{
+		AuthConfigAPIKeyResponse(),
+		AuthConfigOIDCResponse(),
+	}
+}
+
+func AuthConfigOIDCResponse() *authorinov1beta1.Response {
+	return &authorinov1beta1.Response{
+		Name:       "rate-limit-oidc",
+		Wrapper:    authorinov1beta1.Response_Wrapper("envoyDynamicMetadata"),
+		WrapperKey: "ext_auth_data",
+		JSON: &authorinov1beta1.Response_DynamicJSON{
+			Properties: []authorinov1beta1.JsonProperty{
+				{
+					Name: "user-id",
+					ValueFrom: authorinov1beta1.ValueFromAuthJSON{
+						AuthJSON: `auth.identity.sub`,
+					},
+				},
+			},
+		},
+	}
+}
+func AuthConfigAPIKeyResponse() *authorinov1beta1.Response {
+	return &authorinov1beta1.Response{
+		Name:       "rate-limit-apikey",
+		Wrapper:    authorinov1beta1.Response_Wrapper("envoyDynamicMetadata"),
+		WrapperKey: "ext_auth_data",
+		JSON: &authorinov1beta1.Response_DynamicJSON{
+			Properties: []authorinov1beta1.JsonProperty{
+				{
+					Name: "user-id",
+					ValueFrom: authorinov1beta1.ValueFromAuthJSON{
+						AuthJSON: `auth.identity.metadata.annotations.secret\.kuadrant\.io/user-id`,
+					},
+				},
+			},
+		},
+	}
+}
+
+func APIKeySecrets(workloadName string, api *gigglev1alpha1.Api) []*v1.Secret {
+	secrets := make([]*v1.Secret, 0)
+	for userID := range api.Spec.Users {
+		if api.Spec.Users[userID].APIKey != nil {
+			secrets = append(secrets, APIKeySecretsFromUser(userID, workloadName, *api.Spec.Users[userID].APIKey))
+		}
+	}
+	return secrets
+}
+
+func APIKeySecretsFromUser(userID, workloadName, apiKey string) *v1.Secret {
+	return &v1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: fmt.Sprintf("%s-apikey", userID),
+			Labels: map[string]string{
+				"authorino.kuadrant.io/managed-by": "authorino",
+				"app":                              workloadName,
+			},
+			Annotations: map[string]string{
+				"secret.kuadrant.io/user-id": userID,
+			},
+		},
+		StringData: map[string]string{
+			"api_key": apiKey,
+		},
+		Type: v1.SecretTypeOpaque,
 	}
 }
