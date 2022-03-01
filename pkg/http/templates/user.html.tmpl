@@ -94,8 +94,8 @@
                         </div>
                         {{range .APIs }}
                         <div class="apiTableRow">
-                            <div class="apiTableCell">{{ .APIName }}</div>
-                            <div class="apiTableCell">{{ .PlanName }}</div>
+                            <div class="apiTableCell"><a href="/api?id={{ .APIName }}">{{ .APIName }}</a></div>
+                            <div class="apiTableCell">{{if eq .PlanName "Not assigned" }}{{ .PlanName }}{{else}}<a href="/plan?id={{ .PlanName }}&api={{ .APIName }}">{{ .PlanName }}</a>{{end}}</div>
                         </div>
                         {{end}}
                     </div>
@@ -111,7 +111,7 @@
                         </div>
                         {{range .APIs }}
                         <div class="apiTableRow">
-                            <div class="apiTableCell">{{ .APIName }}</div>
+                            <div class="apiTableCell"><a href="/api?id={{ .APIName }}">{{ .APIName }}</a></div>
                             <div class="apiTableCell">{{ .Key }}</div>
                         </div>
                         {{end}}

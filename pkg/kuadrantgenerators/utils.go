@@ -125,7 +125,14 @@ func AuthConfigIdentityFromApiKeyScheme(identity *authorinov1beta1.Identity, sec
 		},
 	}
 
-	identity.Credentials.In = authorinov1beta1.Credentials_In(secScheme.In)
+	// TODO(eastizle): missing "cookie"
+	switch secScheme.In {
+	case "header":
+		identity.Credentials.In = authorinov1beta1.Credentials_In("custom_header")
+	case "query":
+		identity.Credentials.In = authorinov1beta1.Credentials_In("query")
+	}
+
 	identity.Credentials.KeySelector = secScheme.Name
 	identity.APIKey = &apikey
 }
