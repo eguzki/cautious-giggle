@@ -196,8 +196,8 @@ func (in *RateLimitConf) DeepCopyInto(out *RateLimitConf) {
 		*out = new(int32)
 		**out = **in
 	}
-	if in.Eternity != nil {
-		in, out := &in.Eternity, &out.Eternity
+	if in.Yearly != nil {
+		in, out := &in.Yearly, &out.Yearly
 		*out = new(int32)
 		**out = **in
 	}

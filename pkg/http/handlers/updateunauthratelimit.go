@@ -60,7 +60,7 @@ func (a *UpdateUnAuthRateLimitHandler) ServeHTTP(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = setPlanValue(r.FormValue("rl-unauth-global-eternity"), apiObj.Spec.SetUnAuthGlobalEternity)
+	err = setPlanValue(r.FormValue("rl-unauth-global-yearly"), apiObj.Spec.SetUnAuthGlobalYearly)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -78,7 +78,7 @@ func (a *UpdateUnAuthRateLimitHandler) ServeHTTP(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-eternity"), apiObj.Spec.SetUnAuthRemoteIPEternity)
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-yearly"), apiObj.Spec.SetUnAuthRemoteIPYearly)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -105,9 +105,9 @@ func (a *UpdateUnAuthRateLimitHandler) ServeHTTP(w http.ResponseWriter, r *http.
 				return
 			}
 			err = setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-unauth-%s-eternity", operation.OperationID)),
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-yearly", operation.OperationID)),
 				operation.OperationID,
-				apiObj.Spec.SetUnAuthOperationEternity,
+				apiObj.Spec.SetUnAuthOperationYearly,
 			)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)

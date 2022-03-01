@@ -52,10 +52,10 @@ spec:
                         daily:
                           format: int32
                           type: integer
-                        eternity:
+                        monthly:
                           format: int32
                           type: integer
-                        monthly:
+                        yearly:
                           format: int32
                           type: integer
                       type: object
@@ -65,10 +65,10 @@ spec:
                           daily:
                             format: int32
                             type: integer
-                          eternity:
+                          monthly:
                             format: int32
                             type: integer
-                          monthly:
+                          yearly:
                             format: int32
                             type: integer
                         type: object
@@ -88,10 +88,10 @@ spec:
                       daily:
                         format: int32
                         type: integer
-                      eternity:
+                      monthly:
                         format: int32
                         type: integer
-                      monthly:
+                      yearly:
                         format: int32
                         type: integer
                     type: object
@@ -101,10 +101,10 @@ spec:
                         daily:
                           format: int32
                           type: integer
-                        eternity:
+                        monthly:
                           format: int32
                           type: integer
-                        monthly:
+                        yearly:
                           format: int32
                           type: integer
                       type: object
@@ -114,10 +114,10 @@ spec:
                       daily:
                         format: int32
                         type: integer
-                      eternity:
+                      monthly:
                         format: int32
                         type: integer
-                      monthly:
+                      yearly:
                         format: int32
                         type: integer
                     type: object

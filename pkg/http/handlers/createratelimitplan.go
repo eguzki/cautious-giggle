@@ -85,7 +85,7 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = setPlanValue(r.FormValue("rl-auth-global-eternity"), plan.SetAuthGlobalEternity)
+	err = setPlanValue(r.FormValue("rl-auth-global-yearly"), plan.SetAuthGlobalYearly)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -112,9 +112,9 @@ func (a *CreateRateLimitPlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 				return
 			}
 			err = setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-auth-%s-eternity", operation.OperationID)),
+				r.FormValue(fmt.Sprintf("rl-auth-%s-yearly", operation.OperationID)),
 				operation.OperationID,
-				plan.SetAuthOperationEternity,
+				plan.SetAuthOperationYearly,
 			)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)

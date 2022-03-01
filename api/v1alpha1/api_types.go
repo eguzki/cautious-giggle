@@ -28,11 +28,11 @@ type RateLimitConf struct {
 	// +optional
 	Monthly *int32 `json:"monthly,omitempty"`
 	// +optional
-	Eternity *int32 `json:"eternity,omitempty"`
+	Yearly *int32 `json:"yearly,omitempty"`
 }
 
 func (r *RateLimitConf) IsEmpty() bool {
-	return r.Daily == nil && r.Monthly == nil && r.Eternity == nil
+	return r.Daily == nil && r.Monthly == nil && r.Yearly == nil
 }
 
 type UnAuthRateLimitConf struct {
@@ -105,8 +105,8 @@ func (a *ApiPlan) SetAuthGlobalMonthly(val int32) {
 	a.GetGlobal().Monthly = &val
 }
 
-func (a *ApiPlan) SetAuthGlobalEternity(val int32) {
-	a.GetGlobal().Eternity = &val
+func (a *ApiPlan) SetAuthGlobalYearly(val int32) {
+	a.GetGlobal().Yearly = &val
 }
 
 func (a *ApiPlan) SetAuthOperationDaily(val int32, operationID string) {
@@ -117,8 +117,8 @@ func (a *ApiPlan) SetAuthOperationMonthly(val int32, operationID string) {
 	a.GetOperation(operationID).Monthly = &val
 }
 
-func (a *ApiPlan) SetAuthOperationEternity(val int32, operationID string) {
-	a.GetOperation(operationID).Eternity = &val
+func (a *ApiPlan) SetAuthOperationYearly(val int32, operationID string) {
+	a.GetOperation(operationID).Yearly = &val
 }
 
 func (a *ApiPlan) IsEmpty() bool {
@@ -170,8 +170,8 @@ func (a *ApiSpec) SetUnAuthGlobalMonthly(val int32) {
 	a.GetUnAuthRateLimit().GetGlobal().Monthly = &val
 }
 
-func (a *ApiSpec) SetUnAuthGlobalEternity(val int32) {
-	a.GetUnAuthRateLimit().GetGlobal().Eternity = &val
+func (a *ApiSpec) SetUnAuthGlobalYearly(val int32) {
+	a.GetUnAuthRateLimit().GetGlobal().Yearly = &val
 }
 
 func (a *ApiSpec) SetUnAuthRemoteIPDaily(val int32) {
@@ -182,12 +182,12 @@ func (a *ApiSpec) SetUnAuthRemoteIPMonthly(val int32) {
 	a.GetUnAuthRateLimit().GetRemoteIP().Monthly = &val
 }
 
-func (a *ApiSpec) SetUnAuthRemoteIPEternity(val int32) {
-	a.GetUnAuthRateLimit().GetRemoteIP().Eternity = &val
+func (a *ApiSpec) SetUnAuthRemoteIPYearly(val int32) {
+	a.GetUnAuthRateLimit().GetRemoteIP().Yearly = &val
 }
 
-func (a *ApiSpec) SetUnAuthOperationEternity(val int32, operationID string) {
-	a.GetUnAuthRateLimit().GetOperation(operationID).Eternity = &val
+func (a *ApiSpec) SetUnAuthOperationYearly(val int32, operationID string) {
+	a.GetUnAuthRateLimit().GetOperation(operationID).Yearly = &val
 }
 
 func (a *ApiSpec) SetUnAuthOperationDaily(val int32, operationID string) {

@@ -121,7 +121,7 @@
                             <div class="apiTableHead">Target</div>
                             <div class="apiTableHead">Daily</div>
                             <div class="apiTableHead">Monthly</div>
-                            <div class="apiTableHead">Eternity</div>
+                            <div class="apiTableHead">Yearly</div>
                         </div>
                         <div class="apiTableRow">
                             <div class="apiTableCell">Global</div>
@@ -132,7 +132,7 @@
                                 <input type="text" value="{{ .UnAuthGlobalMonthly }}" name="rl-unauth-global-monthly">
                             </div>
                             <div class="apiTableCell">
-                                <input type="text" value="{{ .UnAuthGlobalEternity }}" name="rl-unauth-global-eternity">
+                                <input type="text" value="{{ .UnAuthGlobalYearly }}" name="rl-unauth-global-yearly">
                             </div>
                         </div>
                         <div class="apiTableRow">
@@ -144,7 +144,7 @@
                                 <input type="text" value="{{ .UnAuthRemoteIPMonthly }}" name="rl-unauth-remoteIP-monthly">
                             </div>
                             <div class="apiTableCell">
-                                <input type="text" value="{{ .UnAuthRemoteIPEternity }}" name="rl-unauth-remoteIP-eternity">
+                                <input type="text" value="{{ .UnAuthRemoteIPYearly }}" name="rl-unauth-remoteIP-yearly">
                             </div>
                         </div>
                         {{range .RateLimitOperations }}
@@ -157,7 +157,7 @@
                                 <input type="text" value="{{ .Monthly }}" name="rl-unauth-{{ .OperationID }}-monthly">
                             </div>
                             <div class="apiTableCell">
-                                <input type="text" value="{{ .Eternity }}" name="rl-unauth-{{ .OperationID }}-eternity">
+                                <input type="text" value="{{ .Yearly }}" name="rl-unauth-{{ .OperationID }}-yearly">
                             </div>
                         </div>
                         {{end}}

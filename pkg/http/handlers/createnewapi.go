@@ -115,7 +115,7 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = setPlanValue(r.FormValue("rl-unauth-global-eternity"), desiredAPIObj.Spec.SetUnAuthGlobalEternity)
+	err = setPlanValue(r.FormValue("rl-unauth-global-yearly"), desiredAPIObj.Spec.SetUnAuthGlobalYearly)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -133,7 +133,7 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-eternity"), desiredAPIObj.Spec.SetUnAuthRemoteIPEternity)
+	err = setPlanValue(r.FormValue("rl-unauth-remoteIP-yearly"), desiredAPIObj.Spec.SetUnAuthRemoteIPYearly)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -173,9 +173,9 @@ func (a *CreateNewAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 				return
 			}
 			err = setPlanOperationValue(
-				r.FormValue(fmt.Sprintf("rl-unauth-%s-eternity", operation.OperationID)),
+				r.FormValue(fmt.Sprintf("rl-unauth-%s-yearly", operation.OperationID)),
 				operation.OperationID,
-				desiredAPIObj.Spec.SetUnAuthOperationEternity,
+				desiredAPIObj.Spec.SetUnAuthOperationYearly,
 			)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)

@@ -105,7 +105,7 @@
                         <div class="authTableHead">Target</div>
                         <div class="authTableHead">Daily</div>
                         <div class="authTableHead">Monthly</div>
-                        <div class="authTableHead">Eternity</div>
+                        <div class="authTableHead">Yearly</div>
                     </div>
                     <div class="authTableRow">
                         <div class="authTableCell">Global</div>
@@ -116,7 +116,7 @@
                             <label>{{ .AuthGlobalMonthly }}</label>
                         </div>
                         <div class="authTableCell">
-                            <label>{{ .AuthGlobalEternity }}</label>
+                            <label>{{ .AuthGlobalYearly }}</label>
                         </div>
                     </div>
                     {{range .AuthOperations }}
@@ -129,7 +129,7 @@
                             <label>{{ .Monthly }}</label>
                         </div>
                         <div class="authTableCell">
-                            <label>{{ .Eternity }}</label>
+                            <label>{{ .Yearly }}</label>
                         </div>
                     </div>
                     {{end}}

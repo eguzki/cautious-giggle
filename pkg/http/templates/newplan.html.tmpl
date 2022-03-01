@@ -109,7 +109,7 @@
                             <div class="authTableHead">Target</div>
                             <div class="authTableHead">Daily</div>
                             <div class="authTableHead">Monthly</div>
-                            <div class="authTableHead">Eternity</div>
+                            <div class="authTableHead">Yearly</div>
                         </div>
                         <div class="authTableRow">
                             <div class="authTableCell">Global</div>
@@ -120,7 +120,7 @@
                                 <input type="text" value="0" name="rl-auth-global-monthly">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="rl-auth-global-eternity">
+                                <input type="text" value="0" name="rl-auth-global-yearly">
                             </div>
                         </div>
                         {{range .AuthOperations }}
@@ -133,7 +133,7 @@
                                 <input type="text" value="0" name="rl-auth-{{ .OperationID }}-monthly">
                             </div>
                             <div class="authTableCell">
-                                <input type="text" value="0" name="rl-auth-{{ .OperationID }}-eternity">
+                                <input type="text" value="0" name="rl-auth-{{ .OperationID }}-yearly">
                             </div>
                         </div>
                         {{end}}

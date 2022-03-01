@@ -1,6 +1,8 @@
 package kuadrantgenerators
 
 import (
+	"fmt"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	kuadrantv1alpha1 "github.com/kuadrant/kuadrant-controller/apis/apim/v1alpha1"
 	limitadorv1alpha1 "github.com/kuadrant/limitador-operator/api/v1alpha1"
@@ -19,7 +21,7 @@ func RateLimitPolicy(doc *openapi3.T, api *gigglev1alpha1.Api) (*kuadrantv1alpha
 
 	routes := generateRLPRoutes(doc, api)
 	limits := generateRLPLimits(doc, api)
-	globalActions := generateRLPGlobalActions(doc, api)
+	globalActions := generateRLPGlobalActions(api)
 
 	rlp := &kuadrantv1alpha1.RateLimitPolicy{
 		TypeMeta: metav1.TypeMeta{
@@ -65,10 +67,27 @@ func generateRLPRoutes(doc *openapi3.T, api *gigglev1alpha1.Api) []kuadrantv1alp
 }
 
 func generateRLPLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
-	return nil
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	tmp := generateGlobalUnAuthLimits(api)
+	limits = append(limits, tmp...)
+
+	tmp = generateRemoteIPUnAuthLimits(api)
+	limits = append(limits, tmp...)
+
+	tmp = generateUnAuthRouteLimits(doc, api)
+	limits = append(limits, tmp...)
+
+	tmp = generateGlobalAuthLimits(api)
+	limits = append(limits, tmp...)
+
+	tmp = generateAuthRouteLimits(doc, api)
+	limits = append(limits, tmp...)
+
+	return limits
 }
 
-func generateRLPGlobalActions(doc *openapi3.T, api *gigglev1alpha1.Api) []*kuadrantv1alpha1.RateLimit {
+func generateRLPGlobalActions(api *gigglev1alpha1.Api) []*kuadrantv1alpha1.RateLimit {
 	tmpAPIStr := "api"
 	preRateLimit := &kuadrantv1alpha1.RateLimit{
 		Stage: kuadrantv1alpha1.RateLimitStagePREAUTH,
@@ -137,4 +156,240 @@ func generateRLPGlobalActions(doc *openapi3.T, api *gigglev1alpha1.Api) []*kuadr
 	// no auth RemoteIP action
 
 	return []*kuadrantv1alpha1.RateLimit{preRateLimit, postRateLimit}
+}
+
+func generateGlobalUnAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	globalUnAuth := api.Spec.GetUnAuthRateLimit().GetGlobal()
+	if globalUnAuth.Daily != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{},
+			MaxValue:   int(*globalUnAuth.Daily),
+			Seconds:    3600 * 24,
+		})
+	}
+
+	if globalUnAuth.Monthly != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{},
+			MaxValue:   int(*globalUnAuth.Monthly),
+			Seconds:    3600 * 24 * 30,
+		})
+	}
+
+	if globalUnAuth.Yearly != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{},
+			MaxValue:   int(*globalUnAuth.Yearly),
+			Seconds:    3600 * 24 * 365,
+		})
+	}
+
+	return limits
+}
+
+func generateRemoteIPUnAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	remoteIPUnAuth := api.Spec.GetUnAuthRateLimit().GetRemoteIP()
+	if remoteIPUnAuth.Daily != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{"remote_address"},
+			MaxValue:   int(*remoteIPUnAuth.Daily),
+			Seconds:    3600 * 24,
+		})
+	}
+
+	if remoteIPUnAuth.Monthly != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{"remote_address"},
+			MaxValue:   int(*remoteIPUnAuth.Monthly),
+			Seconds:    3600 * 24 * 30,
+		})
+	}
+
+	if remoteIPUnAuth.Yearly != nil {
+		limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+			Namespace:  "preauth",
+			Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+			Variables:  []string{"remote_address"},
+			MaxValue:   int(*remoteIPUnAuth.Yearly),
+			Seconds:    3600 * 24 * 365,
+		})
+	}
+
+	return limits
+}
+
+func generateUnAuthRouteLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	for path, pathItem := range doc.Paths {
+		for opMethod, operation := range pathItem.Operations() {
+			rateLimitConf := api.Spec.GetUnAuthRateLimit().GetOperation(operation.OperationID)
+			if rateLimitConf.Daily != nil {
+				limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+					Namespace: "preauth",
+					Conditions: []string{
+						fmt.Sprintf("api == %s", api.Name),
+						fmt.Sprintf("method == %s", opMethod),
+						fmt.Sprintf("path == %s", path),
+					},
+					Variables: []string{},
+					MaxValue:  int(*rateLimitConf.Daily),
+					Seconds:   3600 * 24,
+				})
+			}
+
+			if rateLimitConf.Monthly != nil {
+				limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+					Namespace: "preauth",
+					Conditions: []string{
+						fmt.Sprintf("api == %s", api.Name),
+						fmt.Sprintf("method == %s", opMethod),
+						fmt.Sprintf("path == %s", path),
+					},
+					Variables: []string{},
+					MaxValue:  int(*rateLimitConf.Monthly),
+					Seconds:   3600 * 24 * 30,
+				})
+			}
+
+			if rateLimitConf.Yearly != nil {
+				limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+					Namespace: "preauth",
+					Conditions: []string{
+						fmt.Sprintf("api == %s", api.Name),
+						fmt.Sprintf("method == %s", opMethod),
+						fmt.Sprintf("path == %s", path),
+					},
+					Variables: []string{},
+					MaxValue:  int(*rateLimitConf.Yearly),
+					Seconds:   3600 * 24 * 365,
+				})
+			}
+		}
+	}
+
+	return limits
+}
+
+func generateGlobalAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	for userID, userInfo := range api.Spec.Users {
+		if userInfo.Plan == nil {
+			continue
+		}
+		apiPlan := api.Spec.Plans[*userInfo.Plan]
+		if apiPlan == nil {
+			panic(fmt.Sprintf("plan does not exist %s", *userInfo.Plan))
+		}
+		globalAuth := apiPlan.GetGlobal()
+		if globalAuth.Daily != nil {
+			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+				Namespace:  "postauth",
+				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+				Variables:  []string{userID},
+				MaxValue:   int(*globalAuth.Daily),
+				Seconds:    3600 * 24,
+			})
+		}
+
+		if globalAuth.Monthly != nil {
+			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+				Namespace:  "postauth",
+				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+				Variables:  []string{userID},
+				MaxValue:   int(*globalAuth.Monthly),
+				Seconds:    3600 * 24 * 30,
+			})
+		}
+
+		if globalAuth.Yearly != nil {
+			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+				Namespace:  "postauth",
+				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
+				Variables:  []string{userID},
+				MaxValue:   int(*globalAuth.Yearly),
+				Seconds:    3600 * 24 * 365,
+			})
+		}
+	}
+
+	return limits
+}
+
+func generateAuthRouteLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitadorv1alpha1.RateLimitSpec {
+	limits := make([]limitadorv1alpha1.RateLimitSpec, 0)
+
+	for userID, userInfo := range api.Spec.Users {
+		if userInfo.Plan == nil {
+			continue
+		}
+		apiPlan := api.Spec.Plans[*userInfo.Plan]
+		if apiPlan == nil {
+			panic(fmt.Sprintf("plan does not exist %s", *userInfo.Plan))
+		}
+
+		for path, pathItem := range doc.Paths {
+			for opMethod, operation := range pathItem.Operations() {
+				rateLimitConf := apiPlan.GetOperation(operation.OperationID)
+				if rateLimitConf.Daily != nil {
+					limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+						Namespace: "postauth",
+						Conditions: []string{
+							fmt.Sprintf("api == %s", api.Name),
+							fmt.Sprintf("method == %s", opMethod),
+							fmt.Sprintf("path == %s", path),
+						},
+						Variables: []string{userID},
+						MaxValue:  int(*rateLimitConf.Daily),
+						Seconds:   3600 * 24,
+					})
+				}
+
+				if rateLimitConf.Monthly != nil {
+					limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+						Namespace: "postauth",
+						Conditions: []string{
+							fmt.Sprintf("api == %s", api.Name),
+							fmt.Sprintf("method == %s", opMethod),
+							fmt.Sprintf("path == %s", path),
+						},
+						Variables: []string{userID},
+						MaxValue:  int(*rateLimitConf.Monthly),
+						Seconds:   3600 * 24 * 30,
+					})
+				}
+
+				if rateLimitConf.Yearly != nil {
+					limits = append(limits, limitadorv1alpha1.RateLimitSpec{
+						Namespace: "postauth",
+						Conditions: []string{
+							fmt.Sprintf("api == %s", api.Name),
+							fmt.Sprintf("method == %s", opMethod),
+							fmt.Sprintf("path == %s", path),
+						},
+						Variables: []string{userID},
+						MaxValue:  int(*rateLimitConf.Yearly),
+						Seconds:   3600 * 24 * 365,
+					})
+				}
+			}
+		}
+	}
+
+	return limits
 }

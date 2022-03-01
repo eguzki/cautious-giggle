@@ -18,18 +18,18 @@ type PlanOperation struct {
 	OperationID string
 	Daily       string
 	Monthly     string
-	Eternity    string
+	Yearly      string
 }
 
 type PlanData struct {
-	APIName            string
-	APIDomain          string
-	Name               string
-	Description        string
-	AuthGlobalDaily    string
-	AuthGlobalMonthly  string
-	AuthGlobalEternity string
-	AuthOperations     []*PlanOperation
+	APIName           string
+	APIDomain         string
+	Name              string
+	Description       string
+	AuthGlobalDaily   string
+	AuthGlobalMonthly string
+	AuthGlobalYearly  string
+	AuthOperations    []*PlanOperation
 }
 
 type PlanHandler struct {
@@ -82,13 +82,13 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := &PlanData{
-		APIName:            apiName,
-		APIDomain:          apiObj.Spec.PublicDomain,
-		Name:               planName,
-		Description:        plan.Description,
-		AuthGlobalDaily:    "---",
-		AuthGlobalMonthly:  "---",
-		AuthGlobalEternity: "---",
+		APIName:           apiName,
+		APIDomain:         apiObj.Spec.PublicDomain,
+		Name:              planName,
+		Description:       plan.Description,
+		AuthGlobalDaily:   "---",
+		AuthGlobalMonthly: "---",
+		AuthGlobalYearly:  "---",
 	}
 
 	// Initialize
@@ -100,7 +100,7 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					OperationID: operation.OperationID,
 					Daily:       "---",
 					Monthly:     "---",
-					Eternity:    "---",
+					Yearly:      "---",
 				})
 			}
 		}
@@ -112,8 +112,8 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if plan.GetGlobal().Monthly != nil {
 		data.AuthGlobalMonthly = fmt.Sprint(*plan.GetGlobal().Monthly)
 	}
-	if plan.GetGlobal().Eternity != nil {
-		data.AuthGlobalEternity = fmt.Sprint(*plan.GetGlobal().Eternity)
+	if plan.GetGlobal().Yearly != nil {
+		data.AuthGlobalYearly = fmt.Sprint(*plan.GetGlobal().Yearly)
 	}
 
 	for operationID, operationPlan := range plan.Operations {
@@ -127,8 +127,8 @@ func (a *PlanHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					po.Monthly = fmt.Sprint(*operationPlan.Monthly)
 				}
 
-				if operationPlan != nil && operationPlan.Eternity != nil {
-					po.Eternity = fmt.Sprint(*operationPlan.Eternity)
+				if operationPlan != nil && operationPlan.Yearly != nil {
+					po.Yearly = fmt.Sprint(*operationPlan.Yearly)
 				}
 			}
 		}

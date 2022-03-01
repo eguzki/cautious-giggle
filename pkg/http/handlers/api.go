@@ -23,20 +23,20 @@ type Plan struct {
 }
 
 type APIData struct {
-	Name                   string
-	ServiceName            string
-	Description            string
-	PublicDomain           string
-	PathMatchType          string
-	Operations             []Operation
-	Plans                  []Plan
-	RateLimitOperations    []*PlanOperation
-	UnAuthGlobalDaily      string
-	UnAuthGlobalMonthly    string
-	UnAuthGlobalEternity   string
-	UnAuthRemoteIPDaily    string
-	UnAuthRemoteIPMonthly  string
-	UnAuthRemoteIPEternity string
+	Name                  string
+	ServiceName           string
+	Description           string
+	PublicDomain          string
+	PathMatchType         string
+	Operations            []Operation
+	Plans                 []Plan
+	RateLimitOperations   []*PlanOperation
+	UnAuthGlobalDaily     string
+	UnAuthGlobalMonthly   string
+	UnAuthGlobalYearly    string
+	UnAuthRemoteIPDaily   string
+	UnAuthRemoteIPMonthly string
+	UnAuthRemoteIPYearly  string
 }
 
 var _ http.Handler = &APIHandler{}
@@ -58,17 +58,17 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	aPIData := APIData{
-		Name:                   apiName,
-		ServiceName:            apiObj.Spec.ServiceName,
-		Description:            apiObj.Spec.Description,
-		PublicDomain:           apiObj.Spec.PublicDomain,
-		PathMatchType:          apiObj.Spec.PathMatchType,
-		UnAuthGlobalDaily:      "0",
-		UnAuthGlobalMonthly:    "0",
-		UnAuthGlobalEternity:   "0",
-		UnAuthRemoteIPDaily:    "0",
-		UnAuthRemoteIPMonthly:  "0",
-		UnAuthRemoteIPEternity: "0",
+		Name:                  apiName,
+		ServiceName:           apiObj.Spec.ServiceName,
+		Description:           apiObj.Spec.Description,
+		PublicDomain:          apiObj.Spec.PublicDomain,
+		PathMatchType:         apiObj.Spec.PathMatchType,
+		UnAuthGlobalDaily:     "0",
+		UnAuthGlobalMonthly:   "0",
+		UnAuthGlobalYearly:    "0",
+		UnAuthRemoteIPDaily:   "0",
+		UnAuthRemoteIPMonthly: "0",
+		UnAuthRemoteIPYearly:  "0",
 	}
 
 	for planName := range apiObj.Spec.Plans {
@@ -81,8 +81,8 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Monthly != nil {
 		aPIData.UnAuthGlobalMonthly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Monthly)
 	}
-	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Eternity != nil {
-		aPIData.UnAuthGlobalEternity = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Eternity)
+	if apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Yearly != nil {
+		aPIData.UnAuthGlobalYearly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetGlobal().Yearly)
 	}
 
 	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Daily != nil {
@@ -91,8 +91,8 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Monthly != nil {
 		aPIData.UnAuthRemoteIPMonthly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Monthly)
 	}
-	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Eternity != nil {
-		aPIData.UnAuthRemoteIPEternity = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Eternity)
+	if apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Yearly != nil {
+		aPIData.UnAuthRemoteIPYearly = fmt.Sprint(*apiObj.Spec.GetUnAuthRateLimit().GetRemoteIP().Yearly)
 	}
 
 	openapiLoader := openapi3.NewLoader()
@@ -141,7 +141,7 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				OperationID: operation.OperationID,
 				Daily:       "0",
 				Monthly:     "0",
-				Eternity:    "0",
+				Yearly:      "0",
 			})
 		}
 	}
@@ -157,8 +157,8 @@ func (a *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					po.Monthly = fmt.Sprint(*rlConf.Monthly)
 				}
 
-				if rlConf != nil && rlConf.Eternity != nil {
-					po.Eternity = fmt.Sprint(*rlConf.Eternity)
+				if rlConf != nil && rlConf.Yearly != nil {
+					po.Yearly = fmt.Sprint(*rlConf.Yearly)
 				}
 			}
 		}
