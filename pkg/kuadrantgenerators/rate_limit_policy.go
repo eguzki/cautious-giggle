@@ -129,15 +129,15 @@ func generateRLPGlobalActions(api *gigglev1alpha1.Api) []*kuadrantv1alpha1.RateL
 	if api.Spec.HasAnyAuthRateLimit() {
 		// auth user-id
 		//- metadata:
-		//    descriptor_key: "user_id"
+		//    descriptor_key: "user-id"
 		//    metadata_key:
 		//      key: "envoy.filters.http.ext_authz"
 		//      path:
 		//        - key: "ext_auth_data"
-		//        - key: "user_id"
+		//        - key: "user-id"
 		postRateLimit.Actions = append(postRateLimit.Actions, &kuadrantv1alpha1.ActionSpecifier{
 			Metadata: &kuadrantv1alpha1.MetadataSpec{
-				DescriptorKey: "user_id",
+				DescriptorKey: "user-id",
 				MetadataKey: kuadrantv1alpha1.MetadataKeySpec{
 					Key: "envoy.filters.http.ext_authz",
 					Path: []kuadrantv1alpha1.MetadataPathSegment{
@@ -145,7 +145,7 @@ func generateRLPGlobalActions(api *gigglev1alpha1.Api) []*kuadrantv1alpha1.RateL
 							Key: "ext_auth_data",
 						},
 						{
-							Key: "user_id",
+							Key: "user-id",
 						},
 					},
 				},
@@ -300,8 +300,11 @@ func generateGlobalAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateL
 		if globalAuth.Daily != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
 				Namespace:  "postauth",
-				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
-				Variables:  []string{userID},
+				Conditions: []string{
+					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("user-id == %s", userID),
+				},
+				Variables:  []string{},
 				MaxValue:   int(*globalAuth.Daily),
 				Seconds:    3600 * 24,
 			})
@@ -310,8 +313,11 @@ func generateGlobalAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateL
 		if globalAuth.Monthly != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
 				Namespace:  "postauth",
-				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
-				Variables:  []string{userID},
+				Conditions: []string{
+					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("user-id == %s", userID),
+				},
+				Variables:  []string{},
 				MaxValue:   int(*globalAuth.Monthly),
 				Seconds:    3600 * 24 * 30,
 			})
@@ -320,8 +326,11 @@ func generateGlobalAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateL
 		if globalAuth.Yearly != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
 				Namespace:  "postauth",
-				Conditions: []string{fmt.Sprintf("api == %s", api.Name)},
-				Variables:  []string{userID},
+				Conditions: []string{
+					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("user-id == %s", userID),
+				},
+				Variables:  []string{},
 				MaxValue:   int(*globalAuth.Yearly),
 				Seconds:    3600 * 24 * 365,
 			})
@@ -353,8 +362,9 @@ func generateAuthRouteLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitad
 							fmt.Sprintf("api == %s", api.Name),
 							fmt.Sprintf("method == %s", opMethod),
 							fmt.Sprintf("path == %s", path),
+							fmt.Sprintf("user-id == %s", userID),
 						},
-						Variables: []string{userID},
+						Variables: []string{},
 						MaxValue:  int(*rateLimitConf.Daily),
 						Seconds:   3600 * 24,
 					})
@@ -367,8 +377,9 @@ func generateAuthRouteLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitad
 							fmt.Sprintf("api == %s", api.Name),
 							fmt.Sprintf("method == %s", opMethod),
 							fmt.Sprintf("path == %s", path),
+							fmt.Sprintf("user-id == %s", userID),
 						},
-						Variables: []string{userID},
+						Variables: []string{},
 						MaxValue:  int(*rateLimitConf.Monthly),
 						Seconds:   3600 * 24 * 30,
 					})
@@ -381,8 +392,9 @@ func generateAuthRouteLimits(doc *openapi3.T, api *gigglev1alpha1.Api) []limitad
 							fmt.Sprintf("api == %s", api.Name),
 							fmt.Sprintf("method == %s", opMethod),
 							fmt.Sprintf("path == %s", path),
+							fmt.Sprintf("user-id == %s", userID),
 						},
-						Variables: []string{userID},
+						Variables: []string{},
 						MaxValue:  int(*rateLimitConf.Yearly),
 						Seconds:   3600 * 24 * 365,
 					})

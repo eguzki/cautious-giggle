@@ -21,7 +21,7 @@ func VirtualService(doc *openapi3.T, serviceName, serviceNamespace string,
 	}
 
 	destination := &istionetworkingapi.Destination{
-		Host: fmt.Sprintf("%s.%s.svc", serviceName, serviceNamespace),
+		Host: fmt.Sprintf("%s.%s.svc.cluster.local", serviceName, serviceNamespace),
 		Port: &istionetworkingapi.PortSelector{Number: servicePort},
 	}
 

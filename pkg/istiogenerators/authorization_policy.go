@@ -24,8 +24,8 @@ func AuthorizationPolicy(doc *openapi3.T, gatewayLabels map[string]string, publi
 			APIVersion: "security.istio.io/v1beta1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			// Missing namespace
-			Name: objectName,
+			Namespace: "kuadrant-system",
+			Name:      objectName,
 		},
 		Spec: istiosecurityapi.AuthorizationPolicy{
 			Selector: &istiotypeapi.WorkloadSelector{
