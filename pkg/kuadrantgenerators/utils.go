@@ -202,7 +202,7 @@ func APIKeySecretsFromUser(userID, workloadName, apiKey string) *v1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf("%s-apikey", userID),
+			Name: fmt.Sprintf("%s-%s-apikey", workloadName, userID),
 			Labels: map[string]string{
 				"authorino.kuadrant.io/managed-by": "authorino",
 				"app":                              workloadName,
