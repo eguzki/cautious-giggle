@@ -299,40 +299,40 @@ func generateGlobalAuthLimits(api *gigglev1alpha1.Api) []limitadorv1alpha1.RateL
 		globalAuth := apiPlan.GetGlobal()
 		if globalAuth.Daily != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
-				Namespace:  "postauth",
+				Namespace: "postauth",
 				Conditions: []string{
-					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("api == %s", api.Name),
 					fmt.Sprintf("user-id == %s", userID),
 				},
-				Variables:  []string{},
-				MaxValue:   int(*globalAuth.Daily),
-				Seconds:    3600 * 24,
+				Variables: []string{},
+				MaxValue:  int(*globalAuth.Daily),
+				Seconds:   3600 * 24,
 			})
 		}
 
 		if globalAuth.Monthly != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
-				Namespace:  "postauth",
+				Namespace: "postauth",
 				Conditions: []string{
-					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("api == %s", api.Name),
 					fmt.Sprintf("user-id == %s", userID),
 				},
-				Variables:  []string{},
-				MaxValue:   int(*globalAuth.Monthly),
-				Seconds:    3600 * 24 * 30,
+				Variables: []string{},
+				MaxValue:  int(*globalAuth.Monthly),
+				Seconds:   3600 * 24 * 30,
 			})
 		}
 
 		if globalAuth.Yearly != nil {
 			limits = append(limits, limitadorv1alpha1.RateLimitSpec{
-				Namespace:  "postauth",
+				Namespace: "postauth",
 				Conditions: []string{
-					fmt.Sprintf("api == %s", api.Name)
+					fmt.Sprintf("api == %s", api.Name),
 					fmt.Sprintf("user-id == %s", userID),
 				},
-				Variables:  []string{},
-				MaxValue:   int(*globalAuth.Yearly),
-				Seconds:    3600 * 24 * 365,
+				Variables: []string{},
+				MaxValue:  int(*globalAuth.Yearly),
+				Seconds:   3600 * 24 * 365,
 			})
 		}
 	}

@@ -143,30 +143,89 @@ func AuthConfigIdentityFromOIDCScheme(identity *authorinov1beta1.Identity, secSc
 	}
 }
 
-func AuthConfigResponses() []*authorinov1beta1.Response {
-	return []*authorinov1beta1.Response{
-		AuthConfigAPIKeyResponse(),
-		AuthConfigOIDCResponse(),
+func AuthConfigResponsesFromOpenAPI(oasDoc *openapi3.T) ([]*authorinov1beta1.Response, error) {
+	responses := make([]*authorinov1beta1.Response, 0)
+
+	for path, pathItem := range oasDoc.Paths {
+		for opVerb, operation := range pathItem.Operations() {
+			secReqsP := utils.OpenAPIOperationSecRequirements(oasDoc, operation)
+			for _, secReq := range *secReqsP {
+				// Authorino AuthConfig currently only supports one identity method for each identity evaluator.
+				// It does not support, for instance, auth based on two api keys or api key AND oidc.
+				// Thus, some OpenAPI 3.X security requirements are not supported:
+				//
+				// Not Supported:
+				// security:
+				//   - petstore_api_key: []
+				//     toystore_api_key: []
+				//     toystore_oidc: []
+				//
+				// Supported:
+				// security:
+				//   - petstore_api_key: []
+				//   - toystore_api_key: []
+				//   - toystore_oidc: []
+				//
+
+				// scopes not being used now
+				for secSchemeName := range secReq {
+					secSchemeI, err := oasDoc.Components.SecuritySchemes.JSONLookup(secSchemeName)
+					if err != nil {
+						return nil, err
+					}
+
+					secScheme := secSchemeI.(*openapi3.SecurityScheme) // panic if assertion fails
+
+					if secScheme == nil {
+						return nil, fmt.Errorf("sec scheme nil for operation path:%s method:%s", path, opVerb)
+					}
+
+					response := &authorinov1beta1.Response{
+						Wrapper:    authorinov1beta1.Response_Wrapper("envoyDynamicMetadata"),
+						WrapperKey: "ext_auth_data",
+						Conditions: AuthConfigConditionsFromOperation(path, opVerb),
+					}
+
+					switch secScheme.Type {
+					case "apiKey":
+						response.Name = "rate-limit-apikey"
+						response.JSON = &authorinov1beta1.Response_DynamicJSON{
+							Properties: []authorinov1beta1.JsonProperty{
+								{
+									Name: "user-id",
+									ValueFrom: authorinov1beta1.ValueFromAuthJSON{
+										AuthJSON: `auth.identity.metadata.annotations.secret\.kuadrant\.io/user-id`,
+									},
+								},
+							},
+						}
+					case "openIdConnect":
+						response.Name = "rate-limit-oidc"
+						response.JSON = &authorinov1beta1.Response_DynamicJSON{
+							Properties: []authorinov1beta1.JsonProperty{
+								{
+									Name: "user-id",
+									ValueFrom: authorinov1beta1.ValueFromAuthJSON{
+										AuthJSON: `auth.identity.sub`,
+									},
+								},
+							},
+						}
+					default:
+						return nil, fmt.Errorf("sec scheme type %s not supported for path:%s method:%s", secScheme.Type, path, opVerb)
+					}
+
+					responses = append(responses, response)
+					// currently only support for one schema per requirement
+					break
+				}
+			}
+		}
 	}
+
+	return responses, nil
 }
 
-func AuthConfigOIDCResponse() *authorinov1beta1.Response {
-	return &authorinov1beta1.Response{
-		Name:       "rate-limit-oidc",
-		Wrapper:    authorinov1beta1.Response_Wrapper("envoyDynamicMetadata"),
-		WrapperKey: "ext_auth_data",
-		JSON: &authorinov1beta1.Response_DynamicJSON{
-			Properties: []authorinov1beta1.JsonProperty{
-				{
-					Name: "user-id",
-					ValueFrom: authorinov1beta1.ValueFromAuthJSON{
-						AuthJSON: `auth.identity.sub`,
-					},
-				},
-			},
-		},
-	}
-}
 func AuthConfigAPIKeyResponse() *authorinov1beta1.Response {
 	return &authorinov1beta1.Response{
 		Name:       "rate-limit-apikey",

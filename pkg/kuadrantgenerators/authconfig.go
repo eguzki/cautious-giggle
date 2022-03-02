@@ -19,6 +19,11 @@ func AuthConfig(doc *openapi3.T, publicHost string) (*authorinov1beta1.AuthConfi
 		return nil, err
 	}
 
+	responseList, err := AuthConfigResponsesFromOpenAPI(doc)
+	if err != nil {
+		return nil, err
+	}
+
 	authConfig := &authorinov1beta1.AuthConfig{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "AuthConfig",
@@ -32,7 +37,7 @@ func AuthConfig(doc *openapi3.T, publicHost string) (*authorinov1beta1.AuthConfi
 			Identity:      identityList,
 			Metadata:      nil,
 			Authorization: nil,
-			Response:      AuthConfigResponses(),
+			Response:      responseList,
 			Patterns:      nil,
 			Conditions:    nil,
 		},
